@@ -8,7 +8,7 @@
 <script>
 /* eslint-disable */
 import $ from 'jquery'
-import Field from '../model/Field'
+import Playground from '../model/Playground'
 import EventBus from '../model/EventBus'
 import * as Events from '../model/Events'
 
@@ -31,9 +31,9 @@ EventBus.$on('eventName', (eventValue) => {
       [1, 2, 1, 3, 1, 4, 1, 5, 1],
       [6, 1, 7, 1, 8]
     ];
-
-    let field = new Field();
-    field.setRows(window.values);
+    //
+    // let field = new Field();
+    // field.setRows(window.values);
 
     $.each(window.values, function (rowIndex, rowValues) {
       let $tr = $('<tr />');

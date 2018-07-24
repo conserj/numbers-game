@@ -1,4 +1,4 @@
-export default class Field {
+export default class Playground {
   rows = [];
 
   constructor () {
