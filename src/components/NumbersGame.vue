@@ -6,10 +6,22 @@
 </template>
 
 <script>
+/* eslint-disable */
 import $ from 'jquery'
 import Field from '../model/Field'
+import EventBus from '../model/EventBus'
+import * as Events from '../model/Events'
 
-/* eslint-disable */
+/*
+
+EventBus.$emit(Events.MODEL_UPDATED, eventValue);
+EventBus.$on('eventName', (eventValue) => {
+
+});
+
+
+ */
+
   $(function () {
     window.values = [
       [1, 2, 3, 4, 5, 6, 7, 8, 9],
