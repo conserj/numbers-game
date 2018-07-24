@@ -2,15 +2,36 @@
     <div>
         <table id="playground" border="1">
         </table>
+
+        <el-card class="box-card">
+            <el-row v-for="(row, rowIndex) in field" :key="'row_' + rowIndex">
+                <el-col
+                    :span="2"
+                    v-for="(cell, cellIndex) in row"
+                    :key="'cell_' + cellIndex + '_' + rowIndex"
+                >
+                    <div
+                        @click="setChecked(rowIndex, cellIndex)"
+                        :class="cellClass(rowIndex, cellIndex)"
+                    >
+                        <span v-if="cell === 0"><i class="el-icon-close"></i></span>
+                        <span v-else>{{ cell }}</span>
+                    </div>
+                </el-col>
+            </el-row>
+        </el-card>
     </div>
 </template>
 
 <script>
 /* eslint-disable */
 import $ from 'jquery'
+import Field from '../model/Field'
+import PlayGround from '../model/Game'
 import Playground from '../model/Playground'
 import EventBus from '../model/EventBus'
 import * as Events from '../model/Events'
+import _ from 'lodash'
 
 /*
 
@@ -135,12 +156,68 @@ export default {
   name: 'NumbersGame',
   data () {
     return {
+        field: PlayGround,
+        selectedCells: []
+    }
+  },
+  mounted() {
+    EventBus.$on(Events.TAILS_CLICKED, (pair) => {
+      console.log(pair);
+    });
+  },
+  methods: {
+    cellClass(rowIndex, cellIndex) {
+        let result = "tail"
 
+        let key = this.getCellKey(rowIndex, cellIndex);
+
+        if (_.find(this.selectedCells, (item) => {
+          return item.key === key;
+        })) {
+          result += " selected"
+        }
+
+        return result;
+    },
+    setChecked(rowIndex, cellIndex) {
+        this.addSelectedPoint(rowIndex, cellIndex);
+        if (_.keys(this.selectedCells).length === 2) {
+            this.notifySelectedPair(_.clone(this.selectedCells));
+            this.selectedCells = [];
+        }
+    },
+    notifySelectedPair(pair) {
+      EventBus.$emit(Events.TAILS_CLICKED, pair);
+    },
+    addSelectedPoint(rowIndex, cellIndex) {
+      let result = _.clone(this.selectedCells);
+
+      result.push({
+        row: rowIndex,
+        coll: cellIndex,
+        key: this.getCellKey(rowIndex, cellIndex)
+      });
+      this.selectedCells = [];
+      this.selectedCells = result;
+    },
+    getCellKey(rowIndex, cellIndex) {
+      return `row${rowIndex}cell${cellIndex}`;
     }
   }
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+    .tail {
+        border: 1px solid black;
+        text-align: center;
+        font-size: 40px;
+        width: 100%;
+        height: 100%;
+        display: block;
 
+        &.selected {
+            background: lime;
+        }
+    }
 </style>
