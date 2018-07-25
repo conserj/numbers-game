@@ -66,6 +66,8 @@ export default class AbstractHandler {
     if ((valA === valB || valB + valA === 10) && isZeroCombo) {
       playground.makeZeroCell(cellCurr)
       playground.makeZeroCell(cellLast)
+      return true
     }
+    return false
   }
 }

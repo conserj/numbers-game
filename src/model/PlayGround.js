@@ -27,9 +27,6 @@ export default class PlayGround {
     if (this.rows.length) {
       row = this.rows.length - 1
       cell = this.rows[row].length
-      if (cell === 8) {
-        row += 1
-      }
     }
 
     let i = 0

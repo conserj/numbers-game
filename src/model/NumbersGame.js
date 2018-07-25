@@ -8,6 +8,7 @@ export default class NumbersGame {
     this.handler = handler
     this.model = new PlayGround()
     this._onModelUpdate = []
+    this._onSelectFail = []
     this.handler.setGame(this)
   }
 
@@ -19,9 +20,17 @@ export default class NumbersGame {
     this._onModelUpdate.push(callback)
   }
 
+  onSelectFail (callback = (pair) => {}) {
+    this._onSelectFail.push(callback)
+  }
+
   pairSelected (pair) {
-    this.handler.handleCellPair(pair, this.model)
+    var pairClone = _.clone(pair)
+    var nullified = this.handler.handleCellPair(pair, this.model)
     this.fire(this._onModelUpdate, this.model)
+    if (!nullified) {
+      this.fire(this._onSelectFail, pairClone)
+    }
   }
 
   generatePlayground () {

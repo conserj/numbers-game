@@ -1,16 +1,21 @@
 <template>
     <div class="main">
-        <el-button @click="generatePlayground">Generate</el-button>
+        <el-button-group>
+          <el-button type="primary" @click="generatePlayground" icon="el-icon-circle-plus">Generate</el-button>
+          <el-button type="warning" @click="generatePlayground" icon="el-icon-question">Help</el-button>
+        </el-button-group>
         <el-card class="box-card">
-            <el-row v-for="(row, rowIndex) in field.rows" :key="'row_' + rowIndex">
+            <el-row v-for="(row, rowIndex) in field.rows" :key="'row_' + rowIndex" :span="2">
                 <el-col
-                    :span="2"
+                    :span="1"
                     v-for="(cell, cellIndex) in row"
                     :key="'cell_' + cellIndex + '_' + rowIndex"
+                    class="cell"
                 >
                     <div
                         @click="setChecked(cell)"
                         :class="cellClass(cell)"
+                        class="center"
                     >
                         <span v-if="cell.getValue() === 0">0</span>
                         <span v-else>{{ cell.getValue() }}</span>
@@ -49,6 +54,9 @@ export default {
     Game.onModelUpdate((model) => {
       this.field = model
       sessionStorage.setItem('GAME_SESS_ID', JSON.stringify(model.getRows()))
+    })
+    Game.onSelectFail((pair) => {
+      console.log(pair)
     })
   },
   methods: {
@@ -91,21 +99,29 @@ export default {
 </script>
 
 <style scoped lang="scss">
+    .cell {
+      width: 40px !important;
+      height: 40px;
+      margin: 2px;
+    }
     .tail {
-        border: 1px solid black;
+        border-radius: 15%;
         text-align: center;
-        font-size: 40px;
+        font-size: 14px;
+        display: block;
+        background: #409EFF;
+        color: #fff;
         width: 100%;
         height: 100%;
-        display: block;
+        line-height: 3;
 
         &.selected {
-            background: lime;
+            background: #E6A23C;
         }
 
         &.bg_black {
-            background: cadetblue;
-            color: cadetblue;
+            background: #909399;
+            color: #909399;
         }
     }
 </style>
