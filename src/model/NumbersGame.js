@@ -29,6 +29,11 @@ export default class NumbersGame {
     this.fire(this._onModelUpdate, this.model)
   }
 
+  restoreGame (rows) {
+    this.getModel().setRows(rows)
+    this.fire(this._onModelUpdate, this.model)
+  }
+
   fire (callbacks, args) {
     args = [args]
     _.forEach(callbacks, (callback) => {

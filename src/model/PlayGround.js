@@ -61,6 +61,14 @@ export default class PlayGround {
     this.rows = result
   }
 
+  getRows () {
+    return this.rows
+  }
+
+  setRows (rows) {
+    this.rows = rows
+  }
+
   indexOfCell (cell) {
     let result = null
     this.rows.forEach((row, index) => {

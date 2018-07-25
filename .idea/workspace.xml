@@ -2,16 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="5af47b8f-7ab3-49f7-80eb-b5b4d3328617" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/components/NumbersGame.vue" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/NumbersGame.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/Profile.vue" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/Profile.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/model/AbstractHandler.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/AbstractHandler.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/model/NumbersGame.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/NumbersGame.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/model/PlayGround.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/PlayGround.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/model/Playground.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/model/Row.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/model/TailValue.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/model/Cell.js" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -136,13 +130,13 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="NumbersGame.vue" pinned="false" current-in-tab="false">
+      <file leaf-file-name="NumbersGame.vue" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/components/NumbersGame.vue">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="750">
-              <caret line="50" lean-forward="true" selection-start-line="50" selection-end-line="50" />
+            <state relative-caret-position="210">
+              <caret line="14" column="60" selection-start-line="14" selection-start-column="60" selection-end-line="14" selection-end-column="60" />
               <folding>
-                <element signature="e#814#836#0" expanded="true" />
+                <element signature="e#845#867#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -160,8 +154,8 @@
       <file leaf-file-name="NumbersGame.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/model/NumbersGame.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="363">
-              <caret line="30" lean-forward="true" selection-start-line="30" selection-end-line="30" />
+            <state relative-caret-position="468">
+              <caret line="34" column="3" lean-forward="true" selection-start-line="34" selection-start-column="3" selection-end-line="34" selection-end-column="3" />
               <folding>
                 <element signature="e#0#22#0" expanded="true" />
               </folding>
@@ -172,8 +166,8 @@
       <file leaf-file-name="AbstractHandler.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/model/AbstractHandler.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="450">
-              <caret line="30" lean-forward="true" selection-start-line="30" selection-end-line="30" />
+            <state relative-caret-position="1065">
+              <caret line="71" lean-forward="true" selection-start-line="71" selection-end-line="71" />
             </state>
           </provider>
         </entry>
@@ -196,24 +190,6 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="main.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="30">
-              <caret line="5" selection-start-line="5" selection-end-line="5" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="App.vue" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/App.vue">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="105">
-              <caret line="7" column="15" selection-start-line="7" selection-start-column="15" selection-end-line="7" selection-end-column="15" />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="index.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/runner/index.js">
           <provider selected="true" editor-type-id="text-editor">
@@ -226,11 +202,29 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="PlayGround.js" pinned="false" current-in-tab="true">
+      <file leaf-file-name="PlayGround.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/model/PlayGround.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="405">
-              <caret line="42" column="25" lean-forward="true" selection-start-line="42" selection-start-column="25" selection-end-line="42" selection-end-column="25" />
+            <state relative-caret-position="375">
+              <caret line="70" lean-forward="true" selection-start-line="70" selection-end-line="70" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="VueHandler.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/model/VueHandler.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="30">
+              <caret line="3" column="21" selection-start-line="3" selection-start-column="21" selection-end-line="3" selection-end-column="21" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="VueRenderer.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/model/VueRenderer.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="75">
+              <caret line="5" lean-forward="true" selection-start-line="5" selection-end-line="5" />
             </state>
           </provider>
         </entry>
@@ -287,9 +281,12 @@
         <option value="$PROJECT_DIR$/src/model/TailValue.js" />
         <option value="$PROJECT_DIR$/src/model/Math.js" />
         <option value="$PROJECT_DIR$/src/model/AbstractHandler.js" />
-        <option value="$PROJECT_DIR$/src/components/NumbersGame.vue" />
-        <option value="$PROJECT_DIR$/src/model/NumbersGame.js" />
+        <option value="$PROJECT_DIR$/src/common/Math.js" />
+        <option value="$PROJECT_DIR$/src/common/Generator.js" />
+        <option value="$PROJECT_DIR$/src/common/PlaygroundGenerator.js" />
         <option value="$PROJECT_DIR$/src/model/PlayGround.js" />
+        <option value="$PROJECT_DIR$/src/model/NumbersGame.js" />
+        <option value="$PROJECT_DIR$/src/components/NumbersGame.vue" />
       </list>
     </option>
   </component>
@@ -431,7 +428,7 @@
       <workItem from="1532419821502" duration="796000" />
       <workItem from="1532420721322" duration="5666000" />
       <workItem from="1532495346664" duration="6122000" />
-      <workItem from="1532505000236" duration="13417000" />
+      <workItem from="1532505000236" duration="16650000" />
     </task>
     <task id="LOCAL-00001" summary="@vue">
       <created>1532420978151</created>
@@ -458,7 +455,7 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="28627000" />
+    <option name="totallyTimeSpent" value="31860000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="65" y="-4" width="1855" height="1084" extended-state="6" />
@@ -497,7 +494,6 @@
     <option name="LAST_COMMIT_MESSAGE" value="@vue" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/node_modules/vue-router/dist/vue-router.js" />
     <entry file="file://$PROJECT_DIR$/src/App.vue">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="126">
@@ -570,7 +566,7 @@
         <state relative-caret-position="15">
           <caret line="53" selection-start-line="53" selection-end-line="53" />
           <folding>
-            <element signature="e#814#836#0" expanded="true" />
+            <element signature="e#845#867#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -682,13 +678,6 @@
     <entry file="file://$PROJECT_DIR$/src/model/Row.js">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/model/VueRenderer.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <caret column="32" selection-start-column="21" selection-end-column="32" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="30">
@@ -713,13 +702,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/model/VueHandler.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="30">
-          <caret line="3" column="21" selection-start-line="3" selection-start-column="21" selection-end-line="3" selection-end-column="21" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/elements/index.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="15">
@@ -741,13 +723,17 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/model/NumbersGame.js">
+    <entry file="file://$PROJECT_DIR$/src/components/Profile.vue">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="363">
-          <caret line="30" lean-forward="true" selection-start-line="30" selection-end-line="30" />
-          <folding>
-            <element signature="e#0#22#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="165">
+          <caret line="11" selection-start-line="11" selection-end-line="20" selection-end-column="16" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/common/PlaygroundGenerator.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="798">
+          <caret line="83" column="4" selection-start-line="83" selection-start-column="4" selection-end-line="83" selection-end-column="4" />
         </state>
       </provider>
     </entry>
@@ -758,34 +744,51 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/model/AbstractHandler.js">
+    <entry file="file://$PROJECT_DIR$/src/model/VueHandler.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="450">
-          <caret line="30" lean-forward="true" selection-start-line="30" selection-end-line="30" />
+        <state relative-caret-position="30">
+          <caret line="3" column="21" selection-start-line="3" selection-start-column="21" selection-end-line="3" selection-end-column="21" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/components/Profile.vue">
+    <entry file="file://$PROJECT_DIR$/src/model/VueRenderer.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="165">
-          <caret line="11" selection-start-line="11" selection-end-line="20" selection-end-column="16" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/components/NumbersGame.vue">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="750">
-          <caret line="50" lean-forward="true" selection-start-line="50" selection-end-line="50" />
-          <folding>
-            <element signature="e#814#836#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="75">
+          <caret line="5" lean-forward="true" selection-start-line="5" selection-end-line="5" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/model/PlayGround.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="405">
-          <caret line="42" column="25" lean-forward="true" selection-start-line="42" selection-start-column="25" selection-end-line="42" selection-end-column="25" />
+        <state relative-caret-position="375">
+          <caret line="70" lean-forward="true" selection-start-line="70" selection-end-line="70" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/model/NumbersGame.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="468">
+          <caret line="34" column="3" lean-forward="true" selection-start-line="34" selection-start-column="3" selection-end-line="34" selection-end-column="3" />
+          <folding>
+            <element signature="e#0#22#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/model/AbstractHandler.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1065">
+          <caret line="71" lean-forward="true" selection-start-line="71" selection-end-line="71" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/components/NumbersGame.vue">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="210">
+          <caret line="14" column="60" selection-start-line="14" selection-start-column="60" selection-end-line="14" selection-end-column="60" />
+          <folding>
+            <element signature="e#845#867#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
