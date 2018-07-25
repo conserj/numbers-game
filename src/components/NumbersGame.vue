@@ -1,21 +1,22 @@
 <template>
     <div>
+        <profile image="https://avatars3.githubusercontent.com/u/10199414?s=460&v=4"></profile>
         <table id="playground" border="1">
         </table>
 
         <el-card class="box-card">
-            <el-row v-for="(row, rowIndex) in field" :key="'row_' + rowIndex">
+            <el-row v-for="(row, rowIndex) in field.rows" :key="'row_' + rowIndex">
                 <el-col
                     :span="2"
                     v-for="(cell, cellIndex) in row"
                     :key="'cell_' + cellIndex + '_' + rowIndex"
                 >
                     <div
-                        @click="setChecked(rowIndex, cellIndex)"
-                        :class="cellClass(rowIndex, cellIndex)"
+                        @click="setChecked(cell)"
+                        :class="cellClass(cell)"
                     >
-                        <span v-if="cell === 0"><i class="el-icon-close"></i></span>
-                        <span v-else>{{ cell }}</span>
+                        <span v-if="cell.getValue() === 0"><i class="el-icon-close"></i></span>
+                        <span v-else>{{ cell.getValue() }}</span>
                     </div>
                 </el-col>
             </el-row>
@@ -26,23 +27,14 @@
 <script>
 /* eslint-disable */
 import $ from 'jquery'
-import Field from '../model/Field'
-import PlayGround from '../model/Game'
-import EventBus from '../model/EventBus'
-import * as Events from '../model/Events'
 import _ from 'lodash'
-
-/*
-
-EventBus.$emit(Events.MODEL_UPDATED, eventValue);
-EventBus.$on('eventName', (eventValue) => {
-
-});
+import Game from '../runner'
+import Profile from './Profile'
 
 
- */
 
   $(function () {
+    return;
     window.values = [
       [1, 2, 3, 4, 5, 6, 7, 8, 9],
       [1, 1, 1, 2, 1, 3, 1, 4, 0],
@@ -52,7 +44,7 @@ EventBus.$on('eventName', (eventValue) => {
       [6, 1, 7, 1, 8]
     ];
 
-    let field = new Field();
+    let field = new PlayGround();
     field.setRows(window.values);
 
     $.each(window.values, function (rowIndex, rowValues) {
@@ -153,15 +145,19 @@ EventBus.$on('eventName', (eventValue) => {
 
 export default {
   name: 'NumbersGame',
+  components: {
+    Profile
+  },
   data () {
     return {
-        field: PlayGround,
+      field: [],
         selectedCells: []
     }
   },
   mounted() {
-    EventBus.$on(Events.TAILS_CLICKED, (pair) => {
-      console.log(pair);
+    this.field = Game.getModel();
+    Game.onModelUpdate((model) => {
+      this.field = model
     });
   },
   methods: {
@@ -186,7 +182,6 @@ export default {
         }
     },
     notifySelectedPair(pair) {
-      EventBus.$emit(Events.TAILS_CLICKED, pair);
     },
     addSelectedPoint(rowIndex, cellIndex) {
       let result = _.clone(this.selectedCells);
