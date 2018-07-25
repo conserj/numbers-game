@@ -9,20 +9,21 @@
                 @click="loadSkills"
             >Saaaaaaaaaa</button>
         </p>
-        <p>
-            <ul>
-                <li
-                    v-for="skill in skills"
-                    @click="showDetails(skill)"
-                >
-                    {{ skill.title }}
-                </li>
-            </ul>
-        </p>
+        <!--<p>-->
+            <!--<ul>-->
+                <!--<li-->
+                    <!--v-for="skill in skills"-->
+                    <!--@click="showDetails(skill)"-->
+                <!--&gt;-->
+                    <!--{{ skill.title }}-->
+                <!--</li>-->
+            <!--</ul>-->
+        <!--</p>-->
     </div>
 </template>
 <script>
-    export default {
+/* eslint-disable */
+  export default {
       props: {
         image: {
           type: String,

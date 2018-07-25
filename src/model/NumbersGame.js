@@ -7,8 +7,6 @@ export default class NumbersGame {
   constructor (handler) {
     this.handler = handler
     this.model = new PlayGround()
-    window.m = this.model
-    window.g = this
     this._onModelUpdate = []
     this.handler.setGame(this)
   }
@@ -22,15 +20,17 @@ export default class NumbersGame {
   }
 
   pairSelected (pair) {
-    this.handlePair(pair)
+    this.handler.handleCellPair(pair, this.model)
     this.fire(this._onModelUpdate, this.model)
   }
 
-  handlePair (pair) {
-    return null
+  generatePlayground () {
+    this.getModel().generate()
+    this.fire(this._onModelUpdate, this.model)
   }
 
-  fire (callbacks, args = []) {
+  fire (callbacks, args) {
+    args = [args]
     _.forEach(callbacks, (callback) => {
       callback.apply(null, args)
     })

@@ -1,6 +1,6 @@
-export default class TailValue {
+export default class Cell {
   constructor (value) {
-    this.setValue(value)
+    this.setValue(parseInt(value))
   }
 
   getValue () {
