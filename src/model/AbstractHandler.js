@@ -63,11 +63,7 @@ export default class AbstractHandler {
 
     let valA = cellCurr.getValue()
     let valB = cellLast.getValue()
-    if ((valA === valB || valB + valA === 10) && isZeroCombo) {
-      playground.makeZeroCell(cellCurr)
-      playground.makeZeroCell(cellLast)
-      return true
-    }
-    return false
+
+    return (valA === valB || valB + valA === 10) && isZeroCombo
   }
 }

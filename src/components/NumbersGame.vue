@@ -5,7 +5,7 @@
           <el-button type="warning" @click="generatePlayground" icon="el-icon-question">Help</el-button>
         </el-button-group>
         <el-card class="box-card">
-            <el-row v-for="(row, rowIndex) in field.rows" :key="'row_' + rowIndex" :span="2">
+            <el-row v-for="(row, rowIndex) in field.rows" :key="'row_' + rowIndex">
                 <el-col
                     :span="1"
                     v-for="(cell, cellIndex) in row"
@@ -17,7 +17,7 @@
                         :class="cellClass(cell)"
                         class="center"
                     >
-                        <span v-if="cell.getValue() === 0">0</span>
+                        <span v-if="cell.getValue() === 0"></span>
                         <span v-else>{{ cell.getValue() }}</span>
                     </div>
                 </el-col>
@@ -39,9 +39,27 @@ export default {
       selectedCells: []
     }
   },
+  watch: {
+    field: (playground) => {
+      playground.getRows().forEach((row) => {
+        row.forEach((cell) => {
+          if (cell.getExtraClass() === 'error') {
+            setTimeout(() => {
+              cell.setExtraClass('')
+            }, 1000)
+          } else if (cell.getExtraClass() === 'success') {
+            setTimeout(() => {
+              cell.setExtraClass('bg_black')
+              cell.setValue(0)
+            }, 1000)
+          }
+        })
+      })
+    }
+  },
   mounted () {
     this.field = Game.getModel()
-    let session = sessionStorage.getItem('GAME_SESS_ID')
+    let session = sessionStorage.getItem('GAME_SESS')
     if (session) {
       let rows = JSON.parse(session)
       rows.forEach((row, rowIndex) => {
@@ -52,11 +70,9 @@ export default {
       Game.restoreGame(rows)
     }
     Game.onModelUpdate((model) => {
+      this.field = []
       this.field = model
-      sessionStorage.setItem('GAME_SESS_ID', JSON.stringify(model.getRows()))
-    })
-    Game.onSelectFail((pair) => {
-      console.log(pair)
+      sessionStorage.setItem('GAME_SESS', JSON.stringify(model.getRows()))
     })
   },
   methods: {
@@ -67,6 +83,10 @@ export default {
         return item === cell
       })) {
         result += ' selected'
+      }
+
+      if (cell.getExtraClass() !== '') {
+        result += ' ' + cell.getExtraClass()
       }
 
       if (cell.getValue() === 0) {
@@ -99,29 +119,67 @@ export default {
 </script>
 
 <style scoped lang="scss">
+    @keyframes pulse-green {
+        0%, 100% {
+            background-color: #67c23a91;
+        }
+        50% {
+            background-color: #67c23a2b;
+        }
+    }
+    @keyframes pulse-red {
+        0%, 100% {
+            background-color: #f56c6c82;
+        }
+        50% {
+            background-color: #f56c6c47;
+        }
+    }
     .cell {
       width: 40px !important;
       height: 40px;
       margin: 2px;
     }
     .tail {
+        border: 1px solid #DCDFE6;
         border-radius: 15%;
         text-align: center;
         font-size: 14px;
         display: block;
-        background: #409EFF;
-        color: #fff;
+        background: #fff;
+        color: #303133;
         width: 100%;
         height: 100%;
         line-height: 3;
+        cursor: pointer;
 
         &.selected {
-            background: #E6A23C;
+            animation:
+                pulse-green 500ms ease infinite alternate,
+                nudge 700ms linear infinite alternate;
         }
 
         &.bg_black {
-            background: #909399;
-            color: #909399;
+            cursor: default;
+            background: repeating-linear-gradient(
+                45deg,
+                rgba(255, 255, 255, 0.6),
+                rgba(255, 255, 255, 0.6),
+                rgba(255, 255, 255, 0.6),
+                rgba(0, 0, 0, 1) 7px
+            )
+        }
+
+        &.error {
+            animation:
+                pulse-red 500ms ease infinite alternate,
+                nudge 700ms linear infinite alternate;
+        }
+
+        &.success {
+            animation:
+                    pulse-green 500ms ease infinite alternate,
+                    nudge 700ms linear infinite alternate;
         }
     }
 </style>
