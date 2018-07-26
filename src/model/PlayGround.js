@@ -85,7 +85,7 @@ export default class PlayGround {
   getCell (index) {
     let cell = this.rows[index.row][index.cell]
     if (!cell) {
-      throw new Error('Cell does not exist')
+      throw new Error('Cell does not exist at: row = ' + index.row + ' cell = ' + index.cell)
     }
     return cell
   }

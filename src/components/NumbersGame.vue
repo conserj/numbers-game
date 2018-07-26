@@ -2,7 +2,7 @@
     <div class="main">
         <el-button-group>
           <el-button type="primary" @click="generatePlayground" icon="el-icon-circle-plus">Generate</el-button>
-          <el-button type="warning" @click="generatePlayground" icon="el-icon-question">Help</el-button>
+          <el-button type="warning" @click="help" icon="el-icon-question">Help</el-button>
         </el-button-group>
         <el-card class="box-card">
             <el-row v-for="(row, rowIndex) in field.rows" :key="'row_' + rowIndex">
@@ -43,15 +43,10 @@ export default {
     field: (playground) => {
       playground.getRows().forEach((row) => {
         row.forEach((cell) => {
-          if (cell.getExtraClass() === 'error') {
+          if (cell.isInvalidSelected()) {
             setTimeout(() => {
-              cell.setExtraClass('')
-            }, 1000)
-          } else if (cell.getExtraClass() === 'success') {
-            setTimeout(() => {
-              cell.setExtraClass('bg_black')
-              cell.setValue(0)
-            }, 1000)
+              cell.setInvalidSelected(false)
+            }, 2000)
           }
         })
       })
@@ -85,8 +80,8 @@ export default {
         result += ' selected'
       }
 
-      if (cell.getExtraClass() !== '') {
-        result += ' ' + cell.getExtraClass()
+      if (cell.isInvalidSelected()) {
+        result += ' error'
       }
 
       if (cell.getValue() === 0) {
@@ -113,6 +108,9 @@ export default {
     },
     generatePlayground () {
       Game.generatePlayground()
+    },
+    help () {
+      Game.help()
     }
   }
 }
@@ -155,8 +153,8 @@ export default {
 
         &.selected {
             animation:
-                pulse-green 500ms ease infinite alternate,
-                nudge 700ms linear infinite alternate;
+                pulse-green 2s ease infinite alternate,
+                nudge 4s linear infinite alternate;
         }
 
         &.bg_black {
@@ -172,14 +170,8 @@ export default {
 
         &.error {
             animation:
-                pulse-red 500ms ease infinite alternate,
-                nudge 700ms linear infinite alternate;
-        }
-
-        &.success {
-            animation:
-                    pulse-green 500ms ease infinite alternate,
-                    nudge 700ms linear infinite alternate;
+                pulse-red 2s ease infinite alternate,
+                nudge 4s linear infinite alternate;
         }
     }
 </style>

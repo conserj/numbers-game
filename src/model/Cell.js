@@ -1,6 +1,6 @@
 export default class Cell {
   constructor (value) {
-    this.extraClass = ''
+    this.invalidSelected = false
     this.setValue(parseInt(value))
   }
 
@@ -12,11 +12,11 @@ export default class Cell {
     this.value = value
   }
 
-  getExtraClass () {
-    return this.extraClass
+  isInvalidSelected () {
+    return this.invalidSelected
   }
 
-  setExtraClass (extraClass) {
-    this.extraClass = extraClass
+  setInvalidSelected (invalidSelected) {
+    this.invalidSelected = invalidSelected
   }
 }

@@ -14,7 +14,7 @@ export default class AbstractHandler {
     throw new Error('createRenderer is abstract method')
   }
 
-  handleCellPair (pair, playground) {
+  canNullifyPair (pair, playground) {
     let cellA = pair.shift()
     let cellB = pair.pop()
 
