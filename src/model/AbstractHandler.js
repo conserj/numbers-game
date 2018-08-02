@@ -18,6 +18,14 @@ export default class AbstractHandler {
     let cellA = pair.shift()
     let cellB = pair.pop()
 
+    if (cellA === cellB) {
+      return false
+    }
+
+    if (cellA.getValue() === 0 || cellB.getValue() === 0) {
+      return false
+    }
+
     /** @todo make CellIndex class */
     let idxA = playground.indexOfCell(cellA)
     let idxB = playground.indexOfCell(cellB)

@@ -1,4 +1,4 @@
-import Cell from './Cell'
+import PlaygroundCell from './PlaygroundCell'
 
 export default class PlayGround {
   rows = [];
@@ -10,7 +10,7 @@ export default class PlayGround {
 
   generate () {
     let data = []
-    if (!this.rows.length) {
+    if (!this.getRows().length) {
       data = '1234567891112131415161718'.split('')
     } else {
       this.rows.forEach((row) => {
@@ -49,7 +49,7 @@ export default class PlayGround {
         if (value === undefined) {
           break
         }
-        result[row].push(new Cell(value))
+        result[row].push(new PlaygroundCell(row, i, value))
       }
       row++
       i++
@@ -66,6 +66,18 @@ export default class PlayGround {
     this.rows = rows
   }
 
+  getRowCount () {
+    return this.getRows().length
+  }
+
+  getMaxRow () {
+    return this.getRowCount() - 1
+  }
+
+  getRowMaxCell (rowIndex) {
+    return this.rows[rowIndex].length - 1
+  }
+
   indexOfCell (cell) {
     let result = null
     this.rows.forEach((row, index) => {
@@ -77,7 +89,7 @@ export default class PlayGround {
       }
     })
     if (result === null) {
-      throw new Error('Cell does not exist')
+      throw new Error('Number does not exist')
     }
     return result
   }
@@ -85,7 +97,7 @@ export default class PlayGround {
   getCell (index) {
     let cell = this.rows[index.row][index.cell]
     if (!cell) {
-      throw new Error('Cell does not exist at: row = ' + index.row + ' cell = ' + index.cell)
+      throw new Error('Number does not exist at: row = ' + index.row + ' cell = ' + index.cell)
     }
     return cell
   }

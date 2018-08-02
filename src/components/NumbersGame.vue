@@ -29,7 +29,7 @@
 <script>
 import _ from 'lodash'
 import Game from '../runner'
-import Cell from '../model/Cell'
+import PlaygroundCell from '../model/PlaygroundCell'
 
 export default {
   name: 'NumbersGame',
@@ -59,7 +59,7 @@ export default {
       let rows = JSON.parse(session)
       rows.forEach((row, rowIndex) => {
         row.forEach((cell, cellIndex) => {
-          rows[rowIndex][cellIndex] = new Cell(cell.value)
+          rows[rowIndex][cellIndex] = new PlaygroundCell(rowIndex, cellIndex, cell.value)
         })
       })
       Game.restoreGame(rows)
@@ -88,6 +88,10 @@ export default {
         result += ' bg_black'
       }
 
+      if (cell.isHighlighted()) {
+        result += ' selected'
+      }
+
       return result
     },
     setChecked (cell) {
@@ -111,6 +115,11 @@ export default {
     },
     help () {
       Game.help()
+      this.$message({
+        title: 'Warning',
+        message: 'This is a warning message',
+        type: 'warning'
+      })
     }
   }
 }
@@ -169,9 +178,10 @@ export default {
         }
 
         &.error {
-            animation:
-                pulse-red 2s ease infinite alternate,
-                nudge 4s linear infinite alternate;
+            background: #f56c6c47;
+            /*animation:*/
+                /*pulse-red 2s ease infinite alternate,*/
+                /*nudge 4s linear infinite alternate;*/
         }
     }
 </style>

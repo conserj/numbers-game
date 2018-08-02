@@ -1,7 +1,6 @@
 /* eslint-disable no-inner-declarations */
 import _ from 'lodash'
 import PlayGround from './PlayGround'
-import Game from '../runner'
 
 export default class NumbersGame {
   handler;
@@ -40,8 +39,7 @@ export default class NumbersGame {
   }
 
   help () {
-    console.log(this.searchComboLeft())
-    console.log(this.searchComboRight())
+    console.log(this.searchCombo())
   }
 
   restoreGame (rows) {
@@ -56,114 +54,161 @@ export default class NumbersGame {
     })
   }
 
-  searchComboLeft () {
-    let findLeft = (cell, leftPosRow, leftPosCel) => {
-      do {
-        let leftCell = this.model.getCell({row: leftPosRow, cell: leftPosCel})
-        if (this.handler.canNullifyPair([cell, leftCell], this.model)) {
-          console.log(this.model.indexOfCell(cell), this.model.indexOfCell(leftCell))
-          return [cell, leftCell]
+  searchCombo () {
+    let combos = []
+    this.model.getRows().forEach((row) => {
+      row.forEach((cell) => {
+        for (let row = cell.getRowIndex(); row < this.getModel().getRowCount(); row++) {
+          for (let cel = row !== cell.getRowIndex() ? 0 : cell.getCellIndex(); cel < this.getModel().getRowMaxCell(row); cel++) {
+            let candidate = this.getModel().getCell({
+              row: row,
+              cell: cel
+            })
+            if (this.handler.canNullifyPair([cell, candidate], this.getModel())) {
+              combos.push([
+                cell,
+                candidate
+              ])
+            }
+          }
         }
-        leftPosCel = leftPosCel - 1
-        if (leftPosCel === -1) {
-          leftPosCel = 8
-          leftPosRow = leftPosRow - 1
+        for (let row = cell.getRowIndex(); row > 0; row--) {
+          for (let cel = row !== cell.getRowIndex() ? 8 : cell.getCellIndex(); cel > 0; cel--) {
+            let candidate = this.getModel().getCell({
+              row: row,
+              cell: cel
+            })
+            if (this.handler.canNullifyPair([cell, candidate], this.getModel())) {
+              combos.push([
+                cell,
+                candidate
+              ])
+            }
+          }
         }
-      } while (leftPosRow !== -1 && leftPosCel !== -1)
-      return false
+        for (let row = cell.getRowIndex(); row < this.getModel().getRowCount(); row++) {
+          if (this.getModel().getRowMaxCell(row) < cell.getCellIndex()) {
+            continue
+          }
+          let candidate = this.getModel().getCell({
+            row: row,
+            cell: cell.getCellIndex()
+          })
+          if (this.handler.canNullifyPair([cell, candidate], this.getModel())) {
+            combos.push([
+              cell,
+              candidate
+            ])
+          }
+        }
+        for (let row = cell.getRowIndex(); row > 0; row--) {
+          let candidate = this.getModel().getCell({
+            row: row,
+            cell: cell.getCellIndex()
+          })
+          if (this.handler.canNullifyPair([cell, candidate], this.getModel())) {
+            combos.push([
+              cell,
+              candidate
+            ])
+          }
+        }
+      })
+    })
+
+    let pair = combos.shift()
+    if (!pair) {
+      return
     }
-
-    for (let rowIndex = 0; rowIndex < this.model.getRows().length; rowIndex++) {
-      for (let cellIndex = 0; cellIndex < 9; cellIndex++) {
-        let cell = this.model.getCell({row: rowIndex, cell: cellIndex})
-        if (cell.getValue() === 0) {
-          continue
-        }
-
-        let leftPosCel = cellIndex - 1 === -1 ? 8 : cellIndex - 1
-        let leftPosRow = cellIndex - 1 === -1 ? rowIndex - 1 : rowIndex
-
-        if (leftPosRow === -1) {
-          continue
-        }
-
-        let left = findLeft(cell, leftPosRow, leftPosCel)
-        if (left) {
-          return left
-        }
-      }
-    }
-    return null
+    let a = pair.shift()
+    let b = pair.pop()
+    this.getModel().getCell({row: a.getRowIndex(), cell: a.getCellIndex()}).setHighlighted(true)
+    this.getModel().getCell({row: b.getRowIndex(), cell: b.getCellIndex()}).setHighlighted(true)
   }
 
   searchComboRight () {
-    let findRight = (cell, rightPosRow, rightPosCel) => {
-      let maxRow = this.model.getRows().length
-      let maxCell = this.model.getRows()[maxRow - 1].length
-      do {
-        let rightCell = this.model.getCell({row: rightPosRow, cell: rightPosCel})
-        if (this.handler.canNullifyPair([cell, rightCell], this.model)) {
-          console.log(this.model.indexOfCell(cell), this.model.indexOfCell(rightCell))
-          return [cell, rightCell]
-        }
-        rightPosCel = rightPosCel + 1
-        if (rightPosCel === 9) {
-          rightPosCel = 0
-          rightPosRow = rightPosRow + 1
-        }
-      } while (rightPosRow !== maxRow && rightPosCel !== maxCell)
-      return false
-    }
+    let cel = 0
+    let row = 0
+    let combos = []
+    while (true) {
+      let curr = this.model.getCell({
+        row: row,
+        cell: cel
+      })
+      let isLastRowCel = cel === this.model.getRowMaxCell(row)
+      cel = isLastRowCel ? 0 : (cel + 1)
+      row = isLastRowCel ? (row + 1) : row
+      let next = this.model.getCell({
+        row: row,
+        cell: cel
+      })
 
-    for (let rowIndex = 0; rowIndex < this.model.getRows().length; rowIndex++) {
-      for (let cellIndex = 0; cellIndex < 9; cellIndex++) {
-        let cell = this.model.getCell({row: rowIndex, cell: cellIndex})
-        if (cell.getValue() === 0) {
-          continue
-        }
-
-        let leftPosCel = cellIndex + 1 === 9 ? 0 : cellIndex + 1
-        let leftPosRow = cellIndex + 1 === 9 ? rowIndex + 1 : rowIndex
-        if (leftPosRow === this.model.getRows().length + 1) {
-          break
-        }
-        let right = findRight(cell, leftPosRow, leftPosCel)
-        if (right) {
-          return right
-        }
+      if (this.handler.canNullifyPair([curr, next], this.model)) {
+        combos.push([curr, next])
+      }
+      if (row === this.model.getMaxRow() && cel === this.model.getRowMaxCell(this.model.getMaxRow())) {
+        break
       }
     }
-    return null
+
+    return combos
+  }
+
+  searchComboLeft () {
+    let cel = this.model.getRowMaxCell(this.model.getMaxRow())
+    let row = this.model.getMaxRow()
+    let combos = []
+    while (true) {
+      let curr = this.model.getCell({
+        row: row,
+        cell: cel
+      })
+      let isFirstRowCel = cel === 0
+      cel = isFirstRowCel ? 8 : (cel - 1)
+      row = isFirstRowCel ? (row - 1) : row
+      let prev = this.model.getCell({
+        row: row,
+        cell: cel
+      })
+
+      if (this.handler.canNullifyPair([curr, prev], this.model)) {
+        combos.push([curr, prev])
+      }
+      if (cel === 0 && row === 0) {
+        break
+      }
+    }
+
+    return combos
   }
 
   searchComboUp () {
-    let findDown = (cell, downPosRow, downPosCel) => {
-      do {
-        let downCell = this.model.getCell({row: downPosRow, cell: downPosCel})
-        if (this.handler.canNullifyPair([cell, downCell], this.model)) {
-          console.log(this.model.indexOfCell(cell), this.model.indexOfCell(downCell))
-          return [cell, downCell]
-        }
-        downPosRow++
-      } while (downPosRow !== this.model.getRows().length + 1)
-      return false
-    }
+    let cel = this.model.getRowMaxCell(this.model.getMaxRow())
+    let row = this.model.getMaxRow()
+    let combos = []
+    while (true) {
+      let curr = this.model.getCell({
+        row: row,
+        cell: cel
+      })
+      let isFirstRowCel = cel === 0
+      row = isFirstRowCel ? (row - 1) : row
 
-    for (let rowIndex = 0; rowIndex < this.model.getRows().length; rowIndex++) {
-      for (let cellIndex = 0; cellIndex < 9; cellIndex++) {
-        let cell = this.model.getCell({row: rowIndex, cell: cellIndex})
-        if (cell.getValue() === 0) {
-          continue
-        }
+      console.log(row, cel)
+      if (row - 1 === -1) {
+        break
+      }
+      cel = isFirstRowCel ? 8 : cel - 1
+      let prev = this.model.getCell({
+        row: row - 1,
+        cell: cel
+      })
 
-        let downPosCel = cellIndex
-        let downPosRow = rowIndex + 1
-        let down = findDown(cell, downPosRow, downPosCel)
-        if (down) {
-          return down
-        }
+      if (this.handler.canNullifyPair([curr, prev], this.model)) {
+        combos.push([curr, prev])
       }
     }
-    return null
+
+    return combos
   }
 }
