@@ -46,4 +46,8 @@ export default class PlaygroundCell {
   setCellIndex (cellIndex) {
     this.cellIndex = cellIndex
   }
+
+  getIndexDelta () {
+    return this.rowIndex + this.cellIndex
+  }
 }

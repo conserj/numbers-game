@@ -1,9 +1,8 @@
 <template>
-    <div class="main">
-        <el-button-group>
-          <el-button type="primary" @click="generatePlayground" icon="el-icon-circle-plus">Generate</el-button>
-          <el-button type="warning" @click="help" icon="el-icon-question">Help</el-button>
-        </el-button-group>
+  <div class="el-row">
+    <div class="el-col el-col-24 el-col-xs-24 el-col-sm-18">
+        <el-button @click="generatePlayground" icon="el-icon-circle-plus">Generate</el-button>
+        <el-button @click="help" icon="el-icon-question">Help</el-button>
         <el-card class="box-card">
             <el-row v-for="(row, rowIndex) in field.rows" :key="'row_' + rowIndex">
                 <el-col
@@ -24,12 +23,14 @@
             </el-row>
         </el-card>
     </div>
+  </div>
 </template>
 
 <script>
 import _ from 'lodash'
 import Game from '../runner'
 import PlaygroundCell from '../model/PlaygroundCell'
+import PlaygroundCellCombo from '../model/PlaygroundCellCombo'
 
 export default {
   name: 'NumbersGame',
@@ -46,6 +47,11 @@ export default {
           if (cell.isInvalidSelected()) {
             setTimeout(() => {
               cell.setInvalidSelected(false)
+            }, 2000)
+          }
+          if (cell.isHighlighted()) {
+            setTimeout(() => {
+              cell.setHighlighted(false)
             }, 2000)
           }
         })
@@ -97,7 +103,8 @@ export default {
     setChecked (cell) {
       this.addSelectedPoint(cell)
       if (_.keys(this.selectedCells).length === 2) {
-        this.notifySelectedPair(_.clone(this.selectedCells))
+        let combo = _.clone(this.selectedCells)
+        this.notifySelectedPair(new PlaygroundCellCombo(combo[0], combo[1]))
         this.selectedCells = []
       }
     },
@@ -116,10 +123,9 @@ export default {
     help () {
       Game.help()
       this.$message({
-        title: 'Warning',
-        message: 'This is a warning message',
-        type: 'warning'
-      })
+              type: 'warning',
+              message: `No combinations left`
+            });
     }
   }
 }

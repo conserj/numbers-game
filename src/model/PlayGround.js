@@ -2,6 +2,7 @@ import PlaygroundCell from './PlaygroundCell'
 
 export default class PlayGround {
   rows = [];
+  CELL_LIMIT = 8
 
   constructor () {
     this.rows = []
@@ -94,10 +95,10 @@ export default class PlayGround {
     return result
   }
 
-  getCell (index) {
-    let cell = this.rows[index.row][index.cell]
+  getCell (rowIndex, cellIndex) {
+    let cell = this.rows[rowIndex][cellIndex]
     if (!cell) {
-      throw new Error('Number does not exist at: row = ' + index.row + ' cell = ' + index.cell)
+      throw new Error('Number does not exist at: row = ' + rowIndex + ' cell = ' + cellIndex)
     }
     return cell
   }
@@ -107,4 +108,6 @@ export default class PlayGround {
     cell = this.getCell(index)
     cell.setValue(0)
   }
+
+
 }
