@@ -2,9 +2,18 @@
     <el-card class="box-card">
         <div class="buttons">
             <el-button-group>
-                <el-button type="primary" @click="generatePlayground" icon="el-icon-circle-plus">Generate</el-button>
-                <el-button type="primary" @click="help" icon="el-icon-question">Help</el-button>
-                <el-button type="primary" @click="clear" icon="el-icon-delete">Clear</el-button>
+                <el-tooltip class="item" effect="dark" content="Generate" placement="top-start">
+                    <el-button type="primary" @click="generatePlayground" icon="el-icon-circle-plus"></el-button>
+                </el-tooltip>
+                <el-tooltip class="item" effect="dark" content="Undo" placement="top-start">
+                    <el-button type="primary" @click="undo" icon="el-icon-back"></el-button>
+                </el-tooltip>
+                <el-tooltip class="item" effect="dark" content="Help" placement="top-start">
+                    <el-button type="primary" @click="help" icon="el-icon-question"></el-button>
+                </el-tooltip>
+                <el-tooltip class="item" effect="dark" content="Clear" placement="top-start">
+                    <el-button type="primary" @click="clear" icon="el-icon-delete"></el-button>
+                </el-tooltip>
             </el-button-group>
         </div>
         <div class="playground">
@@ -32,9 +41,7 @@
 <script>
 import _ from 'lodash'
 import Game from '../runner'
-import PlaygroundCell from '../model/PlaygroundCell'
 import PlaygroundCellCombo from '../model/PlaygroundCellCombo'
-import PlaygroundCellIndex from '../model/PlaygroundCellIndex'
 
 export default {
   name: 'NumbersGame',
@@ -121,6 +128,9 @@ export default {
     },
     clear () {
       Game.clear()
+    },
+    undo () {
+        Game.undo()
     }
   }
 }

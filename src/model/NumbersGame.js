@@ -57,16 +57,25 @@ export default class NumbersGame {
 
   run () {
     let storedRows = this.storage.read()
-      console.log(storedRows)
     if (storedRows) {
       this.getModel().setRows(storedRows)
     } else {
       this.getModel().generate()
+      this.save()
+    }
+    this.fire(this._onModelUpdate, this.model)
+  }
+
+  undo () {
+    let storedRows = this.storage.readPrevious()
+    if (storedRows) {
+      this.getModel().setRows(storedRows)
     }
     this.fire(this._onModelUpdate, this.model)
   }
 
   save () {
+      console.log('here')
     this.storage.save(this.getModel().getRows())
   }
 

@@ -54,7 +54,7 @@ export default class ComboHandler {
           return true
         }
         allCombos = allCombos.concat(this.searchComboHorizontal(cell, playground, this.onComboSearch.bind(this)))
-        allCombos = allCombos.concat(this.searchComboHorizontal(cell, playground, this.onComboSearch.bind(this)))
+        allCombos = allCombos.concat(this.searchComboVertical(cell, playground, this.onComboSearch.bind(this)))
       })
     })
 

@@ -68,6 +68,7 @@ export default class PlayGround {
     let newRows = []
     this.rows.forEach((row) => {
       if (row.length < this.ROW_LENGTH) {
+        newRows.push(row)
         return true
       }
       let rowSumm = row.reduce(
