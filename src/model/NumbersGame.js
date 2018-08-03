@@ -4,9 +4,8 @@ import PlayGround from './PlayGround'
 import ComboHandler from '../service/ComboHandler'
 
 export default class NumbersGame {
-  handler;
-
-  constructor (handler) {
+  constructor (storage) {
+    this.storage = storage
     this.model = new PlayGround()
     this.comboHandler = new ComboHandler()
     this._onModelUpdate = []
@@ -23,7 +22,7 @@ export default class NumbersGame {
   comboSelected (combo) {
     let min = combo.getMin()
     let max = combo.getMax()
-    let canNullifyPair = this.comboHandler.canNullifyPair(combo, this.model)
+    let canNullifyPair = this.comboHandler.canNullifyCombo(combo, this.model)
 
     if (!canNullifyPair) {
       this.model.getCell(min.getIndex()).setState(-1)
@@ -36,22 +35,39 @@ export default class NumbersGame {
     this.fire(this._onModelUpdate, this.model)
   }
 
+  clear () {
+    this.getModel().clear()
+    this.fire(this._onModelUpdate, this.model)
+  }
+
   generatePlayground () {
     this.getModel().generate()
     this.fire(this._onModelUpdate, this.model)
   }
 
   help () {
-    let combo = this.comboHandler.searchBestCombo(this.model)
+    let combo = this.comboHandler.searchOptimalCombo(this.model)
     if (combo !== null) {
       this.model.getCell(combo.getMin().getIndex()).setState(1)
       this.model.getCell(combo.getMax().getIndex()).setState(1)
+      return true
     }
+    return false
   }
 
-  restoreGame (rows) {
-    this.getModel().setRows(rows)
+  run () {
+    let storedRows = this.storage.read()
+      console.log(storedRows)
+    if (storedRows) {
+      this.getModel().setRows(storedRows)
+    } else {
+      this.getModel().generate()
+    }
     this.fire(this._onModelUpdate, this.model)
+  }
+
+  save () {
+    this.storage.save(this.getModel().getRows())
   }
 
   fire (callbacks, args) {

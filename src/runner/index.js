@@ -1,7 +1,7 @@
 import NumbersGame from '../model/NumbersGame'
-import VueHandler from '../model/VueHandler'
+import Storage from '../service/Storage'
 
-let handler = new VueHandler()
-let Game = new NumbersGame(handler)
+let storage = new Storage('GAME_SESS')
+let Game = new NumbersGame(storage)
 
 export default Game

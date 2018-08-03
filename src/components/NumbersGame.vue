@@ -1,10 +1,13 @@
 <template>
-    <div class="main">
-        <el-button-group>
-          <el-button type="primary" @click="generatePlayground" icon="el-icon-circle-plus">Generate</el-button>
-          <el-button type="warning" @click="help" icon="el-icon-question">Help</el-button>
-        </el-button-group>
-        <el-card class="box-card">
+    <el-card class="box-card">
+        <div class="buttons">
+            <el-button-group>
+                <el-button type="primary" @click="generatePlayground" icon="el-icon-circle-plus">Generate</el-button>
+                <el-button type="primary" @click="help" icon="el-icon-question">Help</el-button>
+                <el-button type="primary" @click="clear" icon="el-icon-delete">Clear</el-button>
+            </el-button-group>
+        </div>
+        <div class="playground">
             <el-row v-for="(row, rowIndex) in field.rows" :key="'row_' + rowIndex">
                 <el-col
                     :span="1"
@@ -22,8 +25,8 @@
                     </div>
                 </el-col>
             </el-row>
-        </el-card>
-    </div>
+        </div>
+    </el-card>
 </template>
 
 <script>
@@ -48,7 +51,7 @@ export default {
           if (cell.getState() !== 0) {
             setTimeout(() => {
               cell.setState(0)
-            }, 2000)
+            }, 350)
           }
         })
       })
@@ -56,20 +59,11 @@ export default {
   },
   mounted () {
     this.field = Game.getModel()
-    let session = sessionStorage.getItem('GAME_SESS')
-    if (session) {
-      let rows = JSON.parse(session)
-      rows.forEach((row, rowIndex) => {
-        row.forEach((cell, cellIndex) => {
-          rows[rowIndex][cellIndex] = new PlaygroundCell(new PlaygroundCellIndex(rowIndex, cellIndex), cell.value)
-        })
-      })
-      Game.restoreGame(rows)
-    }
+    Game.run()
     Game.onModelUpdate((model) => {
       this.field = []
       this.field = model
-      sessionStorage.setItem('GAME_SESS', JSON.stringify(model.getRows()))
+      Game.save()
     })
   },
   methods: {
@@ -117,18 +111,31 @@ export default {
       Game.generatePlayground()
     },
     help () {
-      Game.help()
-      this.$message({
-        title: 'Warning',
-        message: 'This is a warning message',
-        type: 'warning'
-      })
+      if (!Game.help()) {
+        this.$message({
+          title: 'Halt!',
+          message: 'No more combinations left. Press "Generate"',
+          type: 'warning'
+        })
+      }
+    },
+    clear () {
+      Game.clear()
     }
   }
 }
 </script>
 
 <style scoped lang="scss">
+    .buttons {
+        margin-bottom: 20px;
+    }
+
+    .playground {
+        overflow-y: auto;
+        max-height: 800px;
+    }
+
     @keyframes pulse-green {
         0%, 100% {
             background-color: #67c23a91;
@@ -137,6 +144,7 @@ export default {
             background-color: #67c23a2b;
         }
     }
+
     @keyframes pulse-red {
         0%, 100% {
             background-color: #f56c6c82;
@@ -145,11 +153,13 @@ export default {
             background-color: #f56c6c47;
         }
     }
+
     .cell {
-      width: 40px !important;
-      height: 40px;
-      margin: 2px;
+        width: 40px !important;
+        height: 40px;
+        margin: 2px;
     }
+
     .tail {
         border: 1px solid #DCDFE6;
         border-radius: 15%;
@@ -164,27 +174,23 @@ export default {
         cursor: pointer;
 
         &.selected {
-            animation:
-                pulse-green 2s ease infinite alternate,
-                nudge 4s linear infinite alternate;
+            animation: pulse-green 2s ease infinite alternate,
+            nudge 4s linear infinite alternate;
         }
 
         &.bg_black {
             cursor: default;
             background: repeating-linear-gradient(
-                45deg,
-                rgba(255, 255, 255, 0.6),
-                rgba(255, 255, 255, 0.6),
-                rgba(255, 255, 255, 0.6),
-                rgba(0, 0, 0, 1) 7px
+                    45deg,
+                    rgba(255, 255, 255, 0.6),
+                    rgba(255, 255, 255, 0.6),
+                    rgba(255, 255, 255, 0.6),
+                    rgba(0, 0, 0, 1) 7px
             )
         }
 
         &.error {
             background: #f56c6c47;
-            /*animation:*/
-                /*pulse-red 2s ease infinite alternate,*/
-                /*nudge 4s linear infinite alternate;*/
         }
     }
 </style>

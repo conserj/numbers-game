@@ -2,7 +2,7 @@ import PlaygroundCellIndex from '../model/PlaygroundCellIndex'
 import PlaygroundCellCombo from '../model/PlaygroundCellCombo'
 
 export default class ComboHandler {
-  canNullifyPair (combo, playground) {
+  canNullifyCombo (combo, playground) {
     let min = combo.getMin()
     let max = combo.getMax()
 
@@ -46,10 +46,13 @@ export default class ComboHandler {
     return (min.getValue() === max.getValue() || min.getValue() + max.getValue() === 10) && isZeroCombo
   }
 
-  searchBestCombo (playground) {
+  searchOptimalCombo (playground) {
     let allCombos = []
     playground.getRows().forEach((row) => {
       row.forEach((cell) => {
+        if (cell.getValue() === 0) {
+          return true
+        }
         allCombos = allCombos.concat(this.searchComboHorizontal(cell, playground, this.onComboSearch.bind(this)))
         allCombos = allCombos.concat(this.searchComboHorizontal(cell, playground, this.onComboSearch.bind(this)))
       })
@@ -59,30 +62,32 @@ export default class ComboHandler {
       return null
     }
 
-    let bestCombo = allCombos.shift()
+    let optimalCombo = allCombos.shift()
     if (allCombos.length !== 0) {
       allCombos.forEach((currCombo) => {
-        if (bestCombo.getMin().gt(currCombo.getMin()) && bestCombo.getMax().lt(currCombo.getMax())) {
-          bestCombo = currCombo
+        if (optimalCombo.getMin().gt(currCombo.getMin()) && optimalCombo.getMax().lt(currCombo.getMax())) {
+          optimalCombo = currCombo
         }
       })
     }
 
-    return bestCombo
+    return optimalCombo
   }
 
   onComboSearch (rowIndex, cellIndex, comboCell, playground) {
-    let candidateCombo = new PlaygroundCellCombo(
-      comboCell,
-      playground.getCell(
-        new PlaygroundCellIndex(
-          rowIndex,
-          cellIndex
-        )
+    let candidateCell = playground.getCell(
+      new PlaygroundCellIndex(
+        rowIndex,
+        cellIndex
       )
     )
+    if (candidateCell.getValue() === 0) {
+      return null
+    }
 
-    if (!this.canNullifyPair(candidateCombo, playground)) {
+    let candidateCombo = new PlaygroundCellCombo(comboCell, candidateCell)
+
+    if (!this.canNullifyCombo(candidateCombo, playground)) {
       return null
     }
 

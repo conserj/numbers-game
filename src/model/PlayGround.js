@@ -1,5 +1,5 @@
 import PlaygroundCell from './PlaygroundCell'
-import PlaygroundCellIndex from "./PlaygroundCellIndex";
+import PlaygroundCellIndex from './PlaygroundCellIndex'
 
 export default class PlayGround {
   rows = [];
@@ -7,7 +7,6 @@ export default class PlayGround {
   ROW_LENGTH = 8
   constructor () {
     this.rows = []
-    this.generate()
   }
 
   generate () {
@@ -51,13 +50,38 @@ export default class PlayGround {
         if (value === undefined) {
           break
         }
-        result[row].push(new PlaygroundCell(new PlaygroundCellIndex(row, i), value))
+        result[row].push(
+          new PlaygroundCell(
+            new PlaygroundCellIndex(row, i),
+            value
+          )
+        )
       }
       row++
       i++
     }
 
     this.rows = result
+  }
+
+  clear () {
+    let newRows = []
+    this.rows.forEach((row) => {
+      if (row.length < this.ROW_LENGTH) {
+        return true
+      }
+      let rowSumm = row.reduce(
+        (accumulator, currentValue) => {
+          return accumulator + currentValue.getValue()
+        },
+        0
+      )
+
+      if (rowSumm > 0) {
+        newRows.push(row)
+      }
+    })
+    this.rows = newRows
   }
 
   getRows () {
