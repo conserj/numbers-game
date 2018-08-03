@@ -30,6 +30,8 @@
 import _ from 'lodash'
 import Game from '../runner'
 import PlaygroundCell from '../model/PlaygroundCell'
+import PlaygroundCellCombo from '../model/PlaygroundCellCombo'
+import PlaygroundCellIndex from '../model/PlaygroundCellIndex'
 
 export default {
   name: 'NumbersGame',
@@ -43,9 +45,9 @@ export default {
     field: (playground) => {
       playground.getRows().forEach((row) => {
         row.forEach((cell) => {
-          if (cell.isInvalidSelected()) {
+          if (cell.getState() !== 0) {
             setTimeout(() => {
-              cell.setInvalidSelected(false)
+              cell.setState(0)
             }, 2000)
           }
         })
@@ -59,7 +61,7 @@ export default {
       let rows = JSON.parse(session)
       rows.forEach((row, rowIndex) => {
         row.forEach((cell, cellIndex) => {
-          rows[rowIndex][cellIndex] = new PlaygroundCell(rowIndex, cellIndex, cell.value)
+          rows[rowIndex][cellIndex] = new PlaygroundCell(new PlaygroundCellIndex(rowIndex, cellIndex), cell.value)
         })
       })
       Game.restoreGame(rows)
@@ -80,7 +82,7 @@ export default {
         result += ' selected'
       }
 
-      if (cell.isInvalidSelected()) {
+      if (cell.getState() === -1) {
         result += ' error'
       }
 
@@ -88,7 +90,7 @@ export default {
         result += ' bg_black'
       }
 
-      if (cell.isHighlighted()) {
+      if (cell.getState() === 1) {
         result += ' selected'
       }
 
@@ -102,7 +104,8 @@ export default {
       }
     },
     notifySelectedPair (pair) {
-      Game.pairSelected(pair)
+      let combo = new PlaygroundCellCombo(pair.shift(), pair.pop())
+      Game.comboSelected(combo)
     },
     addSelectedPoint (cell) {
       let result = _.clone(this.selectedCells)

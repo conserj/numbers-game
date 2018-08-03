@@ -1,8 +1,10 @@
 import PlaygroundCell from './PlaygroundCell'
+import PlaygroundCellIndex from "./PlaygroundCellIndex";
 
 export default class PlayGround {
   rows = [];
-
+  ROW_START = 0
+  ROW_LENGTH = 8
   constructor () {
     this.rows = []
     this.generate()
@@ -49,7 +51,7 @@ export default class PlayGround {
         if (value === undefined) {
           break
         }
-        result[row].push(new PlaygroundCell(row, i, value))
+        result[row].push(new PlaygroundCell(new PlaygroundCellIndex(row, i), value))
       }
       row++
       i++
@@ -82,10 +84,8 @@ export default class PlayGround {
     let result = null
     this.rows.forEach((row, index) => {
       if (row.indexOf(cell) !== -1) {
-        result = {
-          row: index,
-          cell: row.indexOf(cell)
-        }
+        result = new PlaygroundCellIndex(index, row.indexOf(cell))
+        return false
       }
     })
     if (result === null) {
@@ -95,16 +95,15 @@ export default class PlayGround {
   }
 
   getCell (index) {
-    let cell = this.rows[index.row][index.cell]
+    let cell = this.rows[index.getRow()][index.getCell()]
     if (!cell) {
-      throw new Error('Number does not exist at: row = ' + index.row + ' cell = ' + index.cell)
+      throw new Error('Number does not exist at: row = ' + index.getRow() + ' cell = ' + index.getCell())
     }
     return cell
   }
 
   makeZeroCell (cell) {
-    let index = this.indexOfCell(cell)
-    cell = this.getCell(index)
+    cell = this.getCell(this.indexOfCell(cell))
     cell.setValue(0)
   }
 }
