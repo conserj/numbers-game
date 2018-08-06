@@ -16,7 +16,6 @@ export default class Storage {
   read () {
     let result = null
     let storedRows = this.getStoredRows()
-    console.log(sessionStorage.getItem(this.storageKey))
     if (!storedRows || (storedRows && !storedRows.hasOwnProperty('current'))) {
       return result
     }

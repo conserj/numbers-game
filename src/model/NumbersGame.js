@@ -46,7 +46,7 @@ export default class NumbersGame {
   }
 
   help () {
-    let combo = this.comboHandler.searchOptimalCombo(this.model)
+    let combo = this.comboHandler.searchOptimalCombo(this.getModel())
     if (combo !== null) {
       this.model.getCell(combo.getMin().getIndex()).setState(1)
       this.model.getCell(combo.getMax().getIndex()).setState(1)
@@ -75,8 +75,14 @@ export default class NumbersGame {
   }
 
   save () {
-      console.log('here')
     this.storage.save(this.getModel().getRows())
+  }
+
+  restart () {
+    this.model = new PlayGround()
+    this.getModel().generate()
+    this.save()
+    this.fire(this._onModelUpdate, this.model)
   }
 
   fire (callbacks, args) {

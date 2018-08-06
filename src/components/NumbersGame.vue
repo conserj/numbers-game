@@ -14,6 +14,9 @@
                 <el-tooltip class="item" effect="dark" content="Clear" placement="top-start">
                     <el-button type="primary" @click="clear" icon="el-icon-delete"></el-button>
                 </el-tooltip>
+                <el-tooltip class="item" effect="dark" content="Restart" placement="top-start">
+                    <el-button type="primary" @click="restart" icon="el-icon-refresh"></el-button>
+                </el-tooltip>
             </el-button-group>
         </div>
         <div class="playground">
@@ -126,11 +129,20 @@ export default {
         })
       }
     },
+    restart () {
+      this.$confirm('Are you sure you want to start a new game? All progress will be lost. Continue?', 'Warning', {
+        confirmButtonText: 'OK',
+        cancelButtonText: 'Cancel',
+        type: 'warning'
+      }).then(() => {
+        Game.restart()
+      })
+    },
     clear () {
       Game.clear()
     },
     undo () {
-        Game.undo()
+      Game.undo()
     }
   }
 }
