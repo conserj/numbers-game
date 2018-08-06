@@ -51,26 +51,16 @@ export default class ComboHandler {
 
   searchOptimalCombo (playground) {
     let allCombos = []
-    for (let rowIndex = 0; rowIndex <= playground.getMaxRow(); rowIndex++) {
-      for (let cellIndex = 0; cellIndex <= playground.getRowMaxCell(rowIndex); cellIndex++) {
-        let cell = playground.getCell(new PlaygroundCellIndex(rowIndex, cellIndex))
-        if (cell.getValue() !== 0) {
-          let horizontal = this.findFirstCombo(cell, playground, this.DIRECTION_HORIZONTAL)
-          if (horizontal) {
-            allCombos.push(horizontal)
-          }
-        }
-      }
-      if (allCombos.length) {
-        break
-      }
-    }
 
     for (let rowIndex = 0; rowIndex <= playground.getMaxRow(); rowIndex++) {
       for (let cellIndex = 0; cellIndex <= playground.getRowMaxCell(rowIndex); cellIndex++) {
         let cell = playground.getCell(new PlaygroundCellIndex(rowIndex, cellIndex))
         if (cell.getValue() !== 0) {
-          let horizontal = this.findFirstCombo(cell, playground, this.DIRECTION_VERTICAL)
+          let vertical = this.findFirstCombo(cell, playground, this.DIRECTION_VERTICAL)
+          if (vertical) {
+            allCombos.push(vertical)
+          }
+          let horizontal = this.findFirstCombo(cell, playground, this.DIRECTION_HORIZONTAL)
           if (horizontal) {
             allCombos.push(horizontal)
           }
@@ -88,7 +78,7 @@ export default class ComboHandler {
     let optimalCombo = allCombos.shift()
     if (allCombos.length !== 0) {
       allCombos.forEach((currCombo) => {
-        if (optimalCombo.getMin().gt(currCombo.getMin()) && optimalCombo.getMax().lt(currCombo.getMax())) {
+        if (optimalCombo.getMin().gte(currCombo.getMin())) {
           optimalCombo = currCombo
         }
       })
@@ -98,7 +88,7 @@ export default class ComboHandler {
   }
 
   isValidIndex (index, playground) {
-    return !(index.getRow() >= playground.getMaxRow() && index.getCell() > playground.getRowMaxCell(playground.getMaxRow()))
+    return playground.has(index)
   }
 
   getNextCellIndex (cell, playground, direction) {

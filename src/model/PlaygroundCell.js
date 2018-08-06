@@ -53,6 +53,22 @@ export default class PlaygroundCell {
     return this.getRowIdx() > cell.getRowIdx()
   }
 
+  lte (cell) {
+    if (this.getRowIdx() === cell.getRowIdx()) {
+      return this.getCellIdx() <= cell.getCellIdx()
+    }
+
+    return this.getRowIdx() <= cell.getRowIdx()
+  }
+
+  gte (cell) {
+    if (this.getRowIdx() === cell.getRowIdx()) {
+      return this.getCellIdx() >= cell.getCellIdx()
+    }
+
+    return this.getRowIdx() >= cell.getRowIdx()
+  }
+
   eq (cell) {
     return this === cell
   }

@@ -121,7 +121,17 @@ export default {
       this.selectedCells = result
     },
     generatePlayground () {
-      Game.generatePlayground()
+        if (Game.hasCombinations()) {
+          this.$confirm('You have unclosed combinations. Continue?', 'Warning', {
+              confirmButtonText: 'OK',
+              cancelButtonText: 'Cancel',
+              type: 'warning'
+          }).then(() => {
+            Game.generatePlayground()
+          })
+      } else {
+        Game.generatePlayground()
+      }
     },
     help () {
       if (!Game.help()) {
