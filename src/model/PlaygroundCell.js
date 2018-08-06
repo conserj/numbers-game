@@ -1,9 +1,7 @@
 export default class PlaygroundCell {
-  constructor (row, cell, value) {
-    this.invalidSelected = false
-    this.highlighted = false
-    this.setRowIndex(parseInt(row))
-    this.setCellIndex(parseInt(cell))
+  constructor (index, value) {
+    this.setIndex(index)
+    this.setState(0)
     this.setValue(parseInt(value))
   }
 
@@ -15,35 +13,47 @@ export default class PlaygroundCell {
     this.value = value
   }
 
-  isInvalidSelected () {
-    return this.invalidSelected
+  getState () {
+    return this.state
   }
 
-  setInvalidSelected (invalidSelected) {
-    this.invalidSelected = invalidSelected
+  setState (state) {
+    this.state = state
   }
 
-  isHighlighted () {
-    return this.highlighted
+  getIndex () {
+    return this.index
   }
 
-  setHighlighted (isHighlighted) {
-    this.highlighted = isHighlighted
+  setIndex (index) {
+    this.index = index
   }
 
-  getRowIndex () {
-    return this.rowIndex
+  getRowIdx () {
+    return this.getIndex().getRow()
   }
 
-  setRowIndex (rowIndex) {
-    this.rowIndex = rowIndex
+  getCellIdx () {
+    return this.getIndex().getCell()
   }
 
-  getCellIndex () {
-    return this.cellIndex
+  lt (cell) {
+    if (this.getRowIdx() === cell.getRowIdx()) {
+      return this.getCellIdx() < cell.getCellIdx()
+    }
+
+    return this.getRowIdx() < cell.getRowIdx()
   }
 
-  setCellIndex (cellIndex) {
-    this.cellIndex = cellIndex
+  gt (cell) {
+    if (this.getRowIdx() === cell.getRowIdx()) {
+      return this.getCellIdx() > cell.getCellIdx()
+    }
+
+    return this.getRowIdx() > cell.getRowIdx()
+  }
+
+  eq (cell) {
+    return this === cell
   }
 }

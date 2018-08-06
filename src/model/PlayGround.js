@@ -1,61 +1,121 @@
 import PlaygroundCell from './PlaygroundCell'
+import PlaygroundCellIndex from './PlaygroundCellIndex'
 
 export default class PlayGround {
   rows = [];
 
-  constructor () {
+  ROW_START = 0
+  ROW_LENGTH = 8
+
+  MODE_DEFAULT = 0
+  MODE_EXTENDED = 1
+
+  INITIAL_VALUES_DEFAULT = '1234567891112131415161718'
+  INITIAL_VALUES_EXTENDED = '1234567891111213141516171819'
+
+  constructor (mode = 0) {
     this.rows = []
-    this.generate()
+    switch (mode) {
+      case this.MODE_DEFAULT:
+        this.ROW_LENGTH = 8
+        this.initialValues = this.INITIAL_VALUES_DEFAULT
+        break
+      case this.MODE_EXTENDED:
+        this.ROW_LENGTH = 9
+        this.initialValues = this.INITIAL_VALUES_EXTENDED
+        break
+      default:
+        throw new Error('Unexpected game mode')
+    }
   }
 
   generate () {
-    let data = []
+    let playgroundValues = []
     if (!this.getRows().length) {
-      data = '1234567891112131415161718'.split('')
+      playgroundValues = this.initialValues.split('')
     } else {
       this.rows.forEach((row) => {
         row.forEach((cell) => {
           if (cell.getValue() !== 0) {
-            data.push(cell.getValue())
+            playgroundValues.push(cell.getValue())
           }
         })
       })
     }
 
-    let row = 0
-    let cell = 0
-    if (this.rows.length) {
-      row = this.rows.length - 1
-      cell = this.rows[row].length
+    let startRowIndex = 0
+    let startCellIndex = 0
+    if (this.getRows().length) {
+      startRowIndex = this.getMaxRow()
+      startCellIndex = this.getRowMaxCell(startRowIndex) + 1
     }
 
-    let i = 0
-    let result = []
-    this.rows.forEach((row, rowIndex) => {
-      result[rowIndex] = []
+    let resultRows = []
+    this.getRows().forEach((row, rowIndex) => {
+      resultRows[rowIndex] = []
       row.forEach((cell, cellIndex) => {
-        result[rowIndex][cellIndex] = cell
+        resultRows[rowIndex][cellIndex] = cell
       })
     })
-    while (data.length) {
-      if (!result[row]) {
-        result[row] = []
+
+    this.rows = this.transformRawValuesToPlaygroundRows(
+      resultRows,
+      playgroundValues,
+      startRowIndex,
+      startCellIndex
+    )
+  }
+
+  transformRawValuesToPlaygroundRows (resultRows, playgroundValues, startRowIndex, startCellIndex) {
+    while (playgroundValues.length) {
+      if (!resultRows[startRowIndex]) {
+        resultRows[startRowIndex] = []
       }
-      if (i !== 0) {
-        cell = 0
-      }
-      for (let i = cell; i < 9; i++) {
-        let value = data.shift()
+      for (let cell = startCellIndex; cell < this.ROW_LENGTH + 1; cell++) {
+        let value = playgroundValues.shift()
         if (value === undefined) {
           break
         }
-        result[row].push(new PlaygroundCell(row, i, value))
+        resultRows[startRowIndex].push(
+          new PlaygroundCell(
+            new PlaygroundCellIndex(startRowIndex, cell),
+            value
+          )
+        )
       }
-      row++
-      i++
+      startRowIndex++
+      startCellIndex = 0
     }
 
-    this.rows = result
+    return resultRows
+  }
+
+  clear () {
+    let newPlaygroundValues = []
+    this.getRows().forEach((playgroundRow) => {
+      let temporaryRow = []
+      if (playgroundRow.length < this.ROW_LENGTH) {
+        temporaryRow = playgroundRow
+      } else {
+        let rowSumm = playgroundRow.reduce(
+          (accumulator, currentValue) => {
+            return accumulator + currentValue.getValue()
+          },
+          0
+        )
+
+        if (rowSumm > 0) {
+          temporaryRow = playgroundRow
+        }
+      }
+      if (temporaryRow.length) {
+        temporaryRow.forEach((cell) => {
+          newPlaygroundValues.push(cell.getValue())
+        })
+      }
+    })
+
+    this.rows = this.transformRawValuesToPlaygroundRows([], newPlaygroundValues, 0, 0)
   }
 
   getRows () {
@@ -82,10 +142,8 @@ export default class PlayGround {
     let result = null
     this.rows.forEach((row, index) => {
       if (row.indexOf(cell) !== -1) {
-        result = {
-          row: index,
-          cell: row.indexOf(cell)
-        }
+        result = new PlaygroundCellIndex(index, row.indexOf(cell))
+        return false
       }
     })
     if (result === null) {
@@ -95,16 +153,15 @@ export default class PlayGround {
   }
 
   getCell (index) {
-    let cell = this.rows[index.row][index.cell]
+    let cell = this.rows[index.getRow()][index.getCell()]
     if (!cell) {
-      throw new Error('Number does not exist at: row = ' + index.row + ' cell = ' + index.cell)
+      throw new Error('Number does not exist at: row = ' + index.getRow() + ' cell = ' + index.getCell())
     }
     return cell
   }
 
   makeZeroCell (cell) {
-    let index = this.indexOfCell(cell)
-    cell = this.getCell(index)
+    cell = this.getCell(this.indexOfCell(cell))
     cell.setValue(0)
   }
 }

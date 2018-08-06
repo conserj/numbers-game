@@ -1,15 +1,14 @@
 /* eslint-disable no-inner-declarations */
 import _ from 'lodash'
 import PlayGround from './PlayGround'
+import ComboHandler from '../service/ComboHandler'
 
 export default class NumbersGame {
-  handler;
-
-  constructor (handler) {
-    this.handler = handler
+  constructor (storage) {
+    this.storage = storage
     this.model = new PlayGround()
+    this.comboHandler = new ComboHandler()
     this._onModelUpdate = []
-    this.handler.setGame(this)
   }
 
   getModel () {
@@ -20,16 +19,24 @@ export default class NumbersGame {
     this._onModelUpdate.push(callback)
   }
 
-  pairSelected (pair) {
-    let pairClone = _.clone(pair)
-    let canNullifyPair = this.handler.canNullifyPair(pair, this.model)
+  comboSelected (combo) {
+    let min = combo.getMin()
+    let max = combo.getMax()
+    let canNullifyPair = this.comboHandler.canNullifyCombo(combo, this.model)
+
     if (!canNullifyPair) {
-      this.model.getCell(this.model.indexOfCell(pairClone[0])).setInvalidSelected(true)
-      this.model.getCell(this.model.indexOfCell(pairClone[1])).setInvalidSelected(true)
+      this.model.getCell(min.getIndex()).setState(-1)
+      this.model.getCell(max.getIndex()).setState(-1)
     } else {
-      this.model.makeZeroCell(pairClone[0])
-      this.model.makeZeroCell(pairClone[1])
+      this.model.makeZeroCell(min)
+      this.model.makeZeroCell(max)
     }
+
+    this.fire(this._onModelUpdate, this.model)
+  }
+
+  clear () {
+    this.getModel().clear()
     this.fire(this._onModelUpdate, this.model)
   }
 
@@ -39,11 +46,42 @@ export default class NumbersGame {
   }
 
   help () {
-    console.log(this.searchCombo())
+    let combo = this.comboHandler.searchOptimalCombo(this.getModel())
+    if (combo !== null) {
+      this.model.getCell(combo.getMin().getIndex()).setState(1)
+      this.model.getCell(combo.getMax().getIndex()).setState(1)
+      return true
+    }
+    return false
   }
 
-  restoreGame (rows) {
-    this.getModel().setRows(rows)
+  run () {
+    let storedRows = this.storage.read()
+    if (storedRows) {
+      this.getModel().setRows(storedRows)
+    } else {
+      this.getModel().generate()
+      this.save()
+    }
+    this.fire(this._onModelUpdate, this.model)
+  }
+
+  undo () {
+    let storedRows = this.storage.readPrevious()
+    if (storedRows) {
+      this.getModel().setRows(storedRows)
+    }
+    this.fire(this._onModelUpdate, this.model)
+  }
+
+  save () {
+    this.storage.save(this.getModel().getRows())
+  }
+
+  restart () {
+    this.model = new PlayGround()
+    this.getModel().generate()
+    this.save()
     this.fire(this._onModelUpdate, this.model)
   }
 
@@ -52,163 +90,5 @@ export default class NumbersGame {
     _.forEach(callbacks, (callback) => {
       callback.apply(null, args)
     })
-  }
-
-  searchCombo () {
-    let combos = []
-    this.model.getRows().forEach((row) => {
-      row.forEach((cell) => {
-        for (let row = cell.getRowIndex(); row < this.getModel().getRowCount(); row++) {
-          for (let cel = row !== cell.getRowIndex() ? 0 : cell.getCellIndex(); cel < this.getModel().getRowMaxCell(row); cel++) {
-            let candidate = this.getModel().getCell({
-              row: row,
-              cell: cel
-            })
-            if (this.handler.canNullifyPair([cell, candidate], this.getModel())) {
-              combos.push([
-                cell,
-                candidate
-              ])
-            }
-          }
-        }
-        for (let row = cell.getRowIndex(); row > 0; row--) {
-          for (let cel = row !== cell.getRowIndex() ? 8 : cell.getCellIndex(); cel > 0; cel--) {
-            let candidate = this.getModel().getCell({
-              row: row,
-              cell: cel
-            })
-            if (this.handler.canNullifyPair([cell, candidate], this.getModel())) {
-              combos.push([
-                cell,
-                candidate
-              ])
-            }
-          }
-        }
-        for (let row = cell.getRowIndex(); row < this.getModel().getRowCount(); row++) {
-          if (this.getModel().getRowMaxCell(row) < cell.getCellIndex()) {
-            continue
-          }
-          let candidate = this.getModel().getCell({
-            row: row,
-            cell: cell.getCellIndex()
-          })
-          if (this.handler.canNullifyPair([cell, candidate], this.getModel())) {
-            combos.push([
-              cell,
-              candidate
-            ])
-          }
-        }
-        for (let row = cell.getRowIndex(); row > 0; row--) {
-          let candidate = this.getModel().getCell({
-            row: row,
-            cell: cell.getCellIndex()
-          })
-          if (this.handler.canNullifyPair([cell, candidate], this.getModel())) {
-            combos.push([
-              cell,
-              candidate
-            ])
-          }
-        }
-      })
-    })
-
-    let pair = combos.shift()
-    if (!pair) {
-      return
-    }
-    let a = pair.shift()
-    let b = pair.pop()
-    this.getModel().getCell({row: a.getRowIndex(), cell: a.getCellIndex()}).setHighlighted(true)
-    this.getModel().getCell({row: b.getRowIndex(), cell: b.getCellIndex()}).setHighlighted(true)
-  }
-
-  searchComboRight () {
-    let cel = 0
-    let row = 0
-    let combos = []
-    while (true) {
-      let curr = this.model.getCell({
-        row: row,
-        cell: cel
-      })
-      let isLastRowCel = cel === this.model.getRowMaxCell(row)
-      cel = isLastRowCel ? 0 : (cel + 1)
-      row = isLastRowCel ? (row + 1) : row
-      let next = this.model.getCell({
-        row: row,
-        cell: cel
-      })
-
-      if (this.handler.canNullifyPair([curr, next], this.model)) {
-        combos.push([curr, next])
-      }
-      if (row === this.model.getMaxRow() && cel === this.model.getRowMaxCell(this.model.getMaxRow())) {
-        break
-      }
-    }
-
-    return combos
-  }
-
-  searchComboLeft () {
-    let cel = this.model.getRowMaxCell(this.model.getMaxRow())
-    let row = this.model.getMaxRow()
-    let combos = []
-    while (true) {
-      let curr = this.model.getCell({
-        row: row,
-        cell: cel
-      })
-      let isFirstRowCel = cel === 0
-      cel = isFirstRowCel ? 8 : (cel - 1)
-      row = isFirstRowCel ? (row - 1) : row
-      let prev = this.model.getCell({
-        row: row,
-        cell: cel
-      })
-
-      if (this.handler.canNullifyPair([curr, prev], this.model)) {
-        combos.push([curr, prev])
-      }
-      if (cel === 0 && row === 0) {
-        break
-      }
-    }
-
-    return combos
-  }
-
-  searchComboUp () {
-    let cel = this.model.getRowMaxCell(this.model.getMaxRow())
-    let row = this.model.getMaxRow()
-    let combos = []
-    while (true) {
-      let curr = this.model.getCell({
-        row: row,
-        cell: cel
-      })
-      let isFirstRowCel = cel === 0
-      row = isFirstRowCel ? (row - 1) : row
-
-      console.log(row, cel)
-      if (row - 1 === -1) {
-        break
-      }
-      cel = isFirstRowCel ? 8 : cel - 1
-      let prev = this.model.getCell({
-        row: row - 1,
-        cell: cel
-      })
-
-      if (this.handler.canNullifyPair([curr, prev], this.model)) {
-        combos.push([curr, prev])
-      }
-    }
-
-    return combos
   }
 }
