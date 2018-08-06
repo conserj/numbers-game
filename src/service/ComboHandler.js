@@ -2,6 +2,9 @@ import PlaygroundCellIndex from '../model/PlaygroundCellIndex'
 import PlaygroundCellCombo from '../model/PlaygroundCellCombo'
 
 export default class ComboHandler {
+  DIRECTION_HORIZONTAL = 0
+  DIRECTION_VERTICAL = 1
+
   canNullifyCombo (combo, playground) {
     let min = combo.getMin()
     let max = combo.getMax()
@@ -48,15 +51,35 @@ export default class ComboHandler {
 
   searchOptimalCombo (playground) {
     let allCombos = []
-    playground.getRows().forEach((row) => {
-      row.forEach((cell) => {
-        if (cell.getValue() === 0) {
-          return true
+    for (let rowIndex = 0; rowIndex <= playground.getMaxRow(); rowIndex++) {
+      for (let cellIndex = 0; cellIndex <= playground.getRowMaxCell(rowIndex); cellIndex++) {
+        let cell = playground.getCell(new PlaygroundCellIndex(rowIndex, cellIndex))
+        if (cell.getValue() !== 0) {
+          let horizontal = this.findFirstCombo(cell, playground, this.DIRECTION_HORIZONTAL)
+          if (horizontal) {
+            allCombos.push(horizontal)
+          }
         }
-        allCombos = allCombos.concat(this.searchComboHorizontal(cell, playground, this.onComboSearch.bind(this)))
-        allCombos = allCombos.concat(this.searchComboVertical(cell, playground, this.onComboSearch.bind(this)))
-      })
-    })
+      }
+      if (allCombos.length) {
+        break
+      }
+    }
+
+    for (let rowIndex = 0; rowIndex <= playground.getMaxRow(); rowIndex++) {
+      for (let cellIndex = 0; cellIndex <= playground.getRowMaxCell(rowIndex); cellIndex++) {
+        let cell = playground.getCell(new PlaygroundCellIndex(rowIndex, cellIndex))
+        if (cell.getValue() !== 0) {
+          let horizontal = this.findFirstCombo(cell, playground, this.DIRECTION_VERTICAL)
+          if (horizontal) {
+            allCombos.push(horizontal)
+          }
+        }
+      }
+      if (allCombos.length) {
+        break
+      }
+    }
 
     if (allCombos.length === 0) {
       return null
@@ -74,67 +97,67 @@ export default class ComboHandler {
     return optimalCombo
   }
 
-  onComboSearch (rowIndex, cellIndex, comboCell, playground) {
-    let candidateCell = playground.getCell(
-      new PlaygroundCellIndex(
-        rowIndex,
-        cellIndex
-      )
-    )
-    if (candidateCell.getValue() === 0) {
+  isValidIndex (index, playground) {
+    return !(index.getRow() >= playground.getMaxRow() && index.getCell() > playground.getRowMaxCell(playground.getMaxRow()))
+  }
+
+  getNextCellIndex (cell, playground, direction) {
+    let nextRowIdx = -1
+    let nextCellIdx = -1
+
+    switch (direction) {
+      case this.DIRECTION_HORIZONTAL:
+        nextCellIdx = cell.getCellIdx() + 1
+        nextRowIdx = cell.getRowIdx()
+        if (cell.getCellIdx() === playground.ROW_LENGTH) {
+          nextCellIdx = 0
+          nextRowIdx = nextRowIdx + 1
+        }
+        break
+
+      case this.DIRECTION_VERTICAL:
+        nextCellIdx = cell.getCellIdx()
+        nextRowIdx = cell.getRowIdx() + 1
+        break
+
+      default:
+        throw new Error('Invalid search direction')
+    }
+
+    let nextCellIndex = new PlaygroundCellIndex(nextRowIdx, nextCellIdx)
+    if (!this.isValidIndex(nextCellIndex, playground)) {
       return null
     }
 
-    let candidateCombo = new PlaygroundCellCombo(comboCell, candidateCell)
+    return nextCellIndex
+  }
 
-    if (!this.canNullifyCombo(candidateCombo, playground)) {
+  findFirstCombo (cell, playground, direction) {
+    let nextIndex = this.getNextCellIndex(cell, playground, direction)
+    if (!nextIndex) {
       return null
     }
 
-    return candidateCombo
-  }
-
-  searchComboHorizontal (cell, playground, onSearch) {
-    let horizontalCombos = []
-    for (let rowIndex = cell.getRowIdx(); rowIndex < playground.getRowCount(); rowIndex++) {
-      let cellIndex = rowIndex !== cell.getRowIdx() ? playground.ROW_START : cell.getCellIdx()
-      for (; cellIndex < playground.getRowMaxCell(rowIndex); cellIndex++) {
-        let combo = onSearch(rowIndex, cellIndex, cell, playground)
-        if (combo) {
-          horizontalCombos.push(combo)
+    let nextCellObj = playground.getCell(nextIndex)
+    if (nextCellObj.getValue() !== 0) {
+      let combo = new PlaygroundCellCombo(cell, nextCellObj)
+      if (this.canNullifyCombo(combo, playground)) {
+        return combo
+      }
+      return null
+    } else {
+      nextIndex = this.getNextCellIndex(nextCellObj, playground, direction)
+      while (nextIndex !== null) {
+        nextCellObj = playground.getCell(nextIndex)
+        if (nextCellObj.getValue() !== 0) {
+          let combo = new PlaygroundCellCombo(cell, nextCellObj)
+          if (this.canNullifyCombo(combo, playground)) {
+            return combo
+          }
         }
+        nextIndex = this.getNextCellIndex(nextCellObj, playground, direction)
       }
     }
-    for (let rowIndex = cell.getRowIdx(); rowIndex > 0; rowIndex--) {
-      let cellIndex = rowIndex !== cell.getRowIdx() ? playground.ROW_LENGTH : cell.getCellIdx()
-      for (; cellIndex > 0; cellIndex--) {
-        let combo = onSearch(rowIndex, cellIndex, cell, playground)
-        if (combo) {
-          horizontalCombos.push(combo)
-        }
-      }
-    }
-
-    return horizontalCombos
-  }
-
-  searchComboVertical (cell, playground, onSearch) {
-    let verticalCombos = []
-    for (let rowIndex = cell.getRowIdx(); rowIndex > 0; rowIndex--) {
-      let combo = onSearch(rowIndex, cell.getCellIdx(), cell, playground)
-      if (combo) {
-        verticalCombos.push(combo)
-      }
-    }
-    for (let rowIndex = cell.getRowIdx(); rowIndex < playground.getRowCount(); rowIndex++) {
-      if (playground.getRowMaxCell(rowIndex) >= cell.getIndex().getCell()) {
-        let combo = onSearch(rowIndex, cell.getCellIdx(), cell, playground)
-        if (combo) {
-          verticalCombos.push(combo)
-        }
-      }
-    }
-
-    return verticalCombos
+    return null
   }
 }
