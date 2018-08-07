@@ -40,6 +40,10 @@ export default class NumbersGame {
     this.fire(this._onModelUpdate, this.model)
   }
 
+  hasCombinations () {
+    return !!this.comboHandler.searchOptimalCombo(this.getModel())
+  }
+
   generatePlayground () {
     this.getModel().generate()
     this.fire(this._onModelUpdate, this.model)

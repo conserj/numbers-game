@@ -160,6 +160,14 @@ export default class PlayGround {
     return cell
   }
 
+  has (index) {
+    try {
+      return !!this.getCell(index)
+    } catch (e) {
+      return false
+    }
+  }
+
   makeZeroCell (cell) {
     cell = this.getCell(this.indexOfCell(cell))
     cell.setValue(0)

@@ -3,19 +3,19 @@
         <div class="buttons">
             <el-button-group>
                 <el-tooltip class="item" effect="dark" content="Generate" placement="top-start">
-                    <el-button type="primary" @click="generatePlayground" icon="el-icon-circle-plus"></el-button>
+                    <el-button @click="generatePlayground" icon="el-icon-circle-plus"></el-button>
                 </el-tooltip>
                 <el-tooltip class="item" effect="dark" content="Undo" placement="top-start">
-                    <el-button type="primary" @click="undo" icon="el-icon-back"></el-button>
+                    <el-button @click="undo" icon="el-icon-back"></el-button>
                 </el-tooltip>
                 <el-tooltip class="item" effect="dark" content="Help" placement="top-start">
-                    <el-button type="primary" @click="help" icon="el-icon-question"></el-button>
+                    <el-button @click="help" icon="el-icon-question"></el-button>
                 </el-tooltip>
                 <el-tooltip class="item" effect="dark" content="Clear" placement="top-start">
-                    <el-button type="primary" @click="clear" icon="el-icon-delete"></el-button>
+                    <el-button @click="clear" icon="el-icon-delete"></el-button>
                 </el-tooltip>
                 <el-tooltip class="item" effect="dark" content="Restart" placement="top-start">
-                    <el-button type="primary" @click="restart" icon="el-icon-refresh"></el-button>
+                    <el-button @click="restart" icon="el-icon-refresh"></el-button>
                 </el-tooltip>
             </el-button-group>
         </div>
@@ -83,6 +83,9 @@ export default {
       if (_.find(this.selectedCells, (item) => {
         return item === cell
       })) {
+        if (cell.getState() !== 0) {
+          cell.setState(0)
+        }
         result += ' selected'
       }
 
@@ -95,12 +98,15 @@ export default {
       }
 
       if (cell.getState() === 1) {
-        result += ' selected'
+        result += ' highlighted'
       }
 
       return result
     },
     setChecked (cell) {
+      if (cell.getValue() === 0) {
+        return
+      }
       this.addSelectedPoint(cell)
       if (_.keys(this.selectedCells).length === 2) {
         this.notifySelectedPair(_.clone(this.selectedCells))
@@ -118,7 +124,17 @@ export default {
       this.selectedCells = result
     },
     generatePlayground () {
-      Game.generatePlayground()
+      if (Game.hasCombinations()) {
+        this.$confirm('You have unprocessed combinations. Continue?', 'Warning', {
+          confirmButtonText: 'OK',
+          cancelButtonText: 'Cancel',
+          type: 'warning'
+        }).then(() => {
+          Game.generatePlayground()
+        })
+      } else {
+        Game.generatePlayground()
+      }
     },
     help () {
       if (!Game.help()) {
@@ -196,23 +212,32 @@ export default {
         cursor: pointer;
 
         &.selected {
-            animation: pulse-green 2s ease infinite alternate,
-            nudge 4s linear infinite alternate;
+            color: #409EFF;
+            border-color: #c6e2ff;
+            background-color: #ecf5ff;
         }
 
         &.bg_black {
             cursor: default;
             background: repeating-linear-gradient(
-                    45deg,
-                    rgba(255, 255, 255, 0.6),
-                    rgba(255, 255, 255, 0.6),
-                    rgba(255, 255, 255, 0.6),
-                    rgba(0, 0, 0, 1) 7px
+                45deg,
+                rgba(255, 255, 255, 0.6),
+                rgba(255, 255, 255, 0.6),
+                rgba(255, 255, 255, 0.6),
+                rgba(0, 0, 0, 1) 7px
             )
         }
 
         &.error {
-            background: #f56c6c47;
+            color: #ff404094;
+            border-color: rgba(222, 86, 86, 0.53);
+            background-color: #f7282814;
+        }
+
+        &.highlighted {
+            color: #b78c07;
+            border-color: #fddf1fba;
+            background-color: #ffe35029;
         }
     }
 </style>
