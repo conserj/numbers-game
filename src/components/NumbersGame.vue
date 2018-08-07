@@ -83,6 +83,9 @@ export default {
       if (_.find(this.selectedCells, (item) => {
         return item === cell
       })) {
+        if (cell.getState() !== 0) {
+          cell.setState(0)
+        }
         result += ' selected'
       }
 
@@ -95,7 +98,7 @@ export default {
       }
 
       if (cell.getState() === 1) {
-        result += ' selected'
+        result += ' highlighted'
       }
 
       return result
@@ -121,14 +124,14 @@ export default {
       this.selectedCells = result
     },
     generatePlayground () {
-        if (Game.hasCombinations()) {
-          this.$confirm('You have unclosed combinations. Continue?', 'Warning', {
-              confirmButtonText: 'OK',
-              cancelButtonText: 'Cancel',
-              type: 'warning'
-          }).then(() => {
-            Game.generatePlayground()
-          })
+      if (Game.hasCombinations()) {
+        this.$confirm('You have unprocessed combinations. Continue?', 'Warning', {
+          confirmButtonText: 'OK',
+          cancelButtonText: 'Cancel',
+          type: 'warning'
+        }).then(() => {
+          Game.generatePlayground()
+        })
       } else {
         Game.generatePlayground()
       }
@@ -229,6 +232,12 @@ export default {
             color: #ff404094;
             border-color: rgba(222, 86, 86, 0.53);
             background-color: #f7282814;
+        }
+
+        &.highlighted {
+            color: #b78c07;
+            border-color: #fddf1fba;
+            background-color: #ffe35029;
         }
     }
 </style>

@@ -1,3 +1,6 @@
+/**
+ * @class PlaygroundCellIndex
+ */
 export default class PlaygroundCellIndex {
   /**
    * @param {Number} row

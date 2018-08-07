@@ -1,10 +1,18 @@
 import PlaygroundCellIndex from '../model/PlaygroundCellIndex'
 import PlaygroundCellCombo from '../model/PlaygroundCellCombo'
 
+/**
+ * @class ComboHandler
+ */
 export default class ComboHandler {
-  DIRECTION_HORIZONTAL = 0
-  DIRECTION_VERTICAL = 1
+  SEARCH_DIRECTION_HORIZONTAL = 0
+  SEARCH_DIRECTION_VERTICAL = 1
 
+  /**
+   * @param {PlaygroundCellCombo} combo
+   * @param {PlayGround} playground
+   * @returns {boolean}
+   */
   canNullifyCombo (combo, playground) {
     let min = combo.getMin()
     let max = combo.getMax()
@@ -49,54 +57,64 @@ export default class ComboHandler {
     return (min.getValue() === max.getValue() || min.getValue() + max.getValue() === 10) && isZeroCombo
   }
 
+  /**
+   * @param {PlayGround} playground
+   * @returns {PlaygroundCellCombo|null}
+   */
   searchOptimalCombo (playground) {
-    let allCombos = []
+    let combosArray = []
 
     for (let rowIndex = 0; rowIndex <= playground.getMaxRow(); rowIndex++) {
       for (let cellIndex = 0; cellIndex <= playground.getRowMaxCell(rowIndex); cellIndex++) {
         let cell = playground.getCell(new PlaygroundCellIndex(rowIndex, cellIndex))
         if (cell.getValue() !== 0) {
-          let vertical = this.findFirstCombo(cell, playground, this.DIRECTION_VERTICAL)
+          let vertical = this.findFirstCombo(cell, playground, this.SEARCH_DIRECTION_VERTICAL)
           if (vertical) {
-            allCombos.push(vertical)
+            combosArray.push(vertical)
           }
-          let horizontal = this.findFirstCombo(cell, playground, this.DIRECTION_HORIZONTAL)
+          let horizontal = this.findFirstCombo(cell, playground, this.SEARCH_DIRECTION_HORIZONTAL)
           if (horizontal) {
-            allCombos.push(horizontal)
+            combosArray.push(horizontal)
           }
         }
       }
-      if (allCombos.length) {
+      if (combosArray.length) {
         break
       }
     }
 
-    if (allCombos.length === 0) {
-      return null
+    if (combosArray.length !== 0) {
+      let optimalCombo = combosArray.shift()
+      if (combosArray.length !== 0) {
+        combosArray.forEach((currCombo) => {
+          if (optimalCombo.getMin().eq(currCombo.getMin())) {
+            if (optimalCombo.getMax().gt(currCombo.getMax())) {
+              optimalCombo = currCombo
+            }
+          } else if (optimalCombo.getMin().gt(currCombo.getMin())) {
+            optimalCombo = currCombo
+          }
+        })
+      }
+
+      return optimalCombo
     }
 
-    let optimalCombo = allCombos.shift()
-    if (allCombos.length !== 0) {
-      allCombos.forEach((currCombo) => {
-        if (optimalCombo.getMin().gte(currCombo.getMin())) {
-          optimalCombo = currCombo
-        }
-      })
-    }
-
-    return optimalCombo
+    return null
   }
 
-  isValidIndex (index, playground) {
-    return playground.has(index)
-  }
-
+  /**
+   * @param {PlaygroundCell} cell
+   * @param {PlayGround} playground
+   * @param {Number} direction
+   * @returns {PlaygroundCellIndex|null}
+   */
   getNextCellIndex (cell, playground, direction) {
     let nextRowIdx = -1
     let nextCellIdx = -1
 
     switch (direction) {
-      case this.DIRECTION_HORIZONTAL:
+      case this.SEARCH_DIRECTION_HORIZONTAL:
         nextCellIdx = cell.getCellIdx() + 1
         nextRowIdx = cell.getRowIdx()
         if (cell.getCellIdx() === playground.ROW_LENGTH) {
@@ -105,7 +123,7 @@ export default class ComboHandler {
         }
         break
 
-      case this.DIRECTION_VERTICAL:
+      case this.SEARCH_DIRECTION_VERTICAL:
         nextCellIdx = cell.getCellIdx()
         nextRowIdx = cell.getRowIdx() + 1
         break
@@ -115,13 +133,19 @@ export default class ComboHandler {
     }
 
     let nextCellIndex = new PlaygroundCellIndex(nextRowIdx, nextCellIdx)
-    if (!this.isValidIndex(nextCellIndex, playground)) {
+    if (!playground.has(nextCellIndex)) {
       return null
     }
 
     return nextCellIndex
   }
 
+  /**
+   * @param {PlaygroundCell} cell
+   * @param {PlayGround} playground
+   * @param {Number} direction
+   * @returns {PlaygroundCellCombo|null}
+   */
   findFirstCombo (cell, playground, direction) {
     let nextIndex = this.getNextCellIndex(cell, playground, direction)
     if (!nextIndex) {
