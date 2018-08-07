@@ -19,6 +19,17 @@
                 </el-tooltip>
             </el-button-group>
         </div>
+        <el-collapse accordion>
+            <el-collapse-item>
+                <template slot="title">
+                    Game Statistic <i class="header-icon el-icon-info"></i>
+                </template>
+                <el-table :data="statistic" style="width: 100%" :show-header=false stripe>
+                    <el-table-column prop="title"></el-table-column>
+                    <el-table-column prop="value"></el-table-column>
+                </el-table>
+            </el-collapse-item>
+        </el-collapse>
         <div class="playground">
             <el-row v-for="(row, rowIndex) in field.rows" :key="'row_' + rowIndex">
                 <el-col
@@ -51,7 +62,8 @@ export default {
   data () {
     return {
       field: [],
-      selectedCells: []
+      selectedCells: [],
+      statistic: []
     }
   },
   watch: {
@@ -74,7 +86,10 @@ export default {
       this.field = []
       this.field = model
       Game.save()
+      this.statistic = []
+      this.statistic = Game.getStatistics()
     })
+    this.statistic = Game.getStatistics()
   },
   methods: {
     cellClass (cell) {
@@ -159,6 +174,12 @@ export default {
     },
     undo () {
       Game.undo()
+    },
+    info () {
+      this.$alert('Game Statistics', 'Game Statistics', {
+        confirmButtonText: 'Close',
+        callback: action => { }
+      })
     }
   }
 }
@@ -172,6 +193,7 @@ export default {
     .playground {
         overflow-y: auto;
         max-height: 800px;
+        margin-top: 20px;
     }
 
     @keyframes pulse-green {

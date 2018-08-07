@@ -30,6 +30,7 @@ export default class NumbersGame {
     } else {
       this.model.makeZeroCell(min)
       this.model.makeZeroCell(max)
+      this.storage.incrementMoveCount()
     }
 
     this.fire(this._onModelUpdate, this.model)
@@ -60,7 +61,7 @@ export default class NumbersGame {
   }
 
   run () {
-    let storedRows = this.storage.read()
+    let storedRows = this.storage.readCurrent()
     if (storedRows) {
       this.getModel().setRows(storedRows)
     } else {
@@ -80,6 +81,36 @@ export default class NumbersGame {
 
   save () {
     this.storage.save(this.getModel().getRows())
+  }
+
+  getStatistics () {
+    let statistics = []
+    statistics.push({'title': 'Processed combinations', 'value': this.storage.getMoveCount()})
+    statistics.push({'title': 'Rows count', 'value': this.getModel().getRowCount()})
+
+    let counts = {}
+    this.model.getRows().forEach((row) => {
+      row.forEach((cell) => {
+        counts.all = counts.all ? (counts.all + 1) : 1
+        if (!counts.hasOwnProperty(cell.getValue())) {
+          counts[cell.getValue()] = 0
+        }
+        counts[cell.getValue()] += 1
+      })
+    })
+
+    statistics.push({'title': 'Numbers total', 'value': counts.all})
+    statistics.push({'title': 'Ones', 'value': counts[1]})
+    statistics.push({'title': 'Twos', 'value': counts[2]})
+    statistics.push({'title': 'Threes', 'value': counts[3]})
+    statistics.push({'title': 'Fours', 'value': counts[4]})
+    statistics.push({'title': 'Fives', 'value': counts[5]})
+    statistics.push({'title': 'Sixes', 'value': counts[6]})
+    statistics.push({'title': 'Sevens', 'value': counts[7]})
+    statistics.push({'title': 'Eights', 'value': counts[8]})
+    statistics.push({'title': 'Nines', 'value': counts[9]})
+
+    return statistics
   }
 
   restart () {
