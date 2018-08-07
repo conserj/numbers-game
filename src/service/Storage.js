@@ -9,11 +9,31 @@ export default class Storage {
   save (rows) {
     sessionStorage.setItem(this.storageKey, JSON.stringify({
       current: rows,
-      previous: this.read()
+      previous: this.readCurrent(),
+      moveCount: this.getMoveCount()
     }))
   }
 
-  read () {
+  getMoveCount () {
+    let storedRows = this.getStoredRows()
+    if (!storedRows || (storedRows && !storedRows.hasOwnProperty('moveCount'))) {
+      return 0
+    }
+
+    return storedRows.moveCount
+  }
+
+  incrementMoveCount () {
+    let json = sessionStorage.getItem(this.storageKey)
+    if (json) {
+      let obj = JSON.parse(json)
+      obj.moveCount = obj.moveCount ? (parseInt(obj.moveCount) + 1) : 1
+      sessionStorage.setItem(this.storageKey, JSON.stringify(obj))
+    }
+    return null
+  }
+
+  readCurrent () {
     let result = null
     let storedRows = this.getStoredRows()
     if (!storedRows || (storedRows && !storedRows.hasOwnProperty('current'))) {
@@ -38,7 +58,8 @@ export default class Storage {
         this.storageKey,
         JSON.stringify({
           current: result,
-          previous: null
+          previous: null,
+          moveCount: this.getMoveCount()
         })
       )
     }
