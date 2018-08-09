@@ -24,14 +24,14 @@
                 <template slot="title">
                     Game Statistic <i class="header-icon el-icon-info"></i>
                 </template>
-                <el-table :data="statistic" style="width: 100%" :show-header=false stripe>
+                <el-table :data="statistics" style="width: 100%" :show-header=false stripe>
                     <el-table-column prop="title"></el-table-column>
                     <el-table-column prop="value"></el-table-column>
                 </el-table>
             </el-collapse-item>
         </el-collapse>
         <div class="playground">
-            <el-row v-for="(row, rowIndex) in field.rows" :key="'row_' + rowIndex">
+            <el-row v-for="(row, rowIndex) in playground.rows" :key="'row_' + rowIndex">
                 <el-col
                     :span="1"
                     v-for="(cell, cellIndex) in row"
@@ -61,13 +61,13 @@ export default {
   name: 'NumbersGame',
   data () {
     return {
-      field: [],
+      playground: [],
       selectedCells: [],
-      statistic: []
+      statistics: []
     }
   },
   watch: {
-    field: (playground) => {
+    playground: (playground) => {
       playground.getRows().forEach((row) => {
         row.forEach((cell) => {
           if (cell.getState() !== 0) {
@@ -80,15 +80,25 @@ export default {
     }
   },
   mounted () {
-    this.field = Game.getModel()
+    this.playground = Game.getPlayground()
     Game.run()
     Game.onModelUpdate((model) => {
-      this.field = []
-      this.field = model
-      this.statistic = []
-      this.statistic = Game.getStatistics()
+      this.playground = []
+      this.playground = model
+      this.statistics = []
+      this.statistics = Game.getStatistics().getAll()
+      if (this.playground.isCompleted()) {
+        this.$alert('<p>You have finished all the combinations. This time you needed ' + Game.gameState.getComboCount() + ' combinations. Press `Start New Game` and try to make your result better!</p>', 'Congratulations', {
+          confirmButtonText: 'Start New Game',
+          type: 'success',
+          dangerouslyUseHTMLString: true,
+          callback: action => {
+            Game.restart()
+          }
+        })
+      }
     })
-    this.statistic = Game.getStatistics()
+    this.statistics = Game.getStatistics().getAll()
   },
   methods: {
     cellClass (cell) {
@@ -151,7 +161,7 @@ export default {
       }
     },
     help () {
-      if (!Game.help()) {
+      if (!Game.highlightAvailableCombo()) {
         this.$message({
           title: 'Halt!',
           message: 'No more combinations left. Press "Generate"',

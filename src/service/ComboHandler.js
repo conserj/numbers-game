@@ -10,7 +10,7 @@ export default class ComboHandler {
 
   /**
    * @param {PlaygroundCellCombo} combo
-   * @param {PlayGround} playground
+   * @param {Playground} playground
    * @returns {boolean}
    */
   canNullifyCombo (combo, playground) {
@@ -31,8 +31,8 @@ export default class ComboHandler {
       }
 
       // horizontal mode
-      let minCell = row === min.getRowIdx() ? min.getCellIdx() : playground.ROW_START
-      let maxCell = row === max.getRowIdx() ? max.getCellIdx() : playground.ROW_LENGTH
+      let minCell = row === min.getRowIdx() ? min.getCellIdx() : playground.rowStart
+      let maxCell = row === max.getRowIdx() ? max.getCellIdx() : playground.rowLength
       for (let cell = minCell; cell <= maxCell; cell++) {
         comboRelated.push(playground.getCell(new PlaygroundCellIndex(row, cell)))
       }
@@ -58,7 +58,7 @@ export default class ComboHandler {
   }
 
   /**
-   * @param {PlayGround} playground
+   * @param {Playground} playground
    * @returns {PlaygroundCellCombo|null}
    */
   searchOptimalCombo (playground) {
@@ -105,7 +105,7 @@ export default class ComboHandler {
 
   /**
    * @param {PlaygroundCell} cell
-   * @param {PlayGround} playground
+   * @param {Playground} playground
    * @param {Number} direction
    * @returns {PlaygroundCellIndex|null}
    */
@@ -117,7 +117,7 @@ export default class ComboHandler {
       case this.SEARCH_DIRECTION_HORIZONTAL:
         nextCellIdx = cell.getCellIdx() + 1
         nextRowIdx = cell.getRowIdx()
-        if (cell.getCellIdx() === playground.ROW_LENGTH) {
+        if (cell.getCellIdx() === playground.rowLength) {
           nextCellIdx = 0
           nextRowIdx = nextRowIdx + 1
         }
@@ -142,7 +142,7 @@ export default class ComboHandler {
 
   /**
    * @param {PlaygroundCell} cell
-   * @param {PlayGround} playground
+   * @param {Playground} playground
    * @param {Number} direction
    * @returns {PlaygroundCellCombo|null}
    */

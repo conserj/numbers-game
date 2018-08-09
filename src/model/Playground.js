@@ -1,29 +1,25 @@
 import PlaygroundCell from './PlaygroundCell'
 import PlaygroundCellIndex from './PlaygroundCellIndex'
-import _ from 'lodash'
 
-export default class PlayGround {
-  rows = [];
+export default class Playground {
+  rows = []
 
-  ROW_START = 0
-  ROW_LENGTH = 8
+  rowStart = 0
+  rowLength = 0
 
   MODE_DEFAULT = 0
   MODE_EXTENDED = 1
-
-  INITIAL_VALUES_DEFAULT = '1234567891112131415161718'
-  INITIAL_VALUES_EXTENDED = '1234567891111213141516171819'
 
   constructor (mode = 0) {
     this.rows = []
     switch (mode) {
       case this.MODE_DEFAULT:
-        this.ROW_LENGTH = 8
-        this.initialValues = this.INITIAL_VALUES_DEFAULT
+        this.rowLength = 8
+        this.initialValues = '1234567891112131415161718'
         break
       case this.MODE_EXTENDED:
-        this.ROW_LENGTH = 9
-        this.initialValues = this.INITIAL_VALUES_EXTENDED
+        this.rowLength = 9
+        this.initialValues = '1234567891111213141516171819'
         break
       default:
         throw new Error('Unexpected game mode')
@@ -72,7 +68,7 @@ export default class PlayGround {
       if (!resultRows[startRowIndex]) {
         resultRows[startRowIndex] = []
       }
-      for (let cell = startCellIndex; cell < this.ROW_LENGTH + 1; cell++) {
+      for (let cell = startCellIndex; cell < this.rowLength + 1; cell++) {
         let value = playgroundValues.shift()
         if (value === undefined) {
           break
@@ -95,7 +91,7 @@ export default class PlayGround {
     let newPlaygroundValues = []
     this.getRows().forEach((playgroundRow) => {
       let temporaryRow = []
-      if (playgroundRow.length < this.ROW_LENGTH) {
+      if (playgroundRow.length < this.rowLength) {
         temporaryRow = playgroundRow
       } else {
         let rowSumm = playgroundRow.reduce(
@@ -191,5 +187,16 @@ export default class PlayGround {
       })
     })
     return depthClone
+  }
+
+  isCompleted () {
+    for (let rowIndex = 0; rowIndex <= this.getMaxRow(); rowIndex++) {
+      for (let cellIndex = 0; cellIndex <= this.getRowMaxCell(rowIndex); cellIndex++) {
+        if (this.rows[rowIndex][cellIndex].getValue() !== 0) {
+          return false
+        }
+      }
+    }
+    return true
   }
 }

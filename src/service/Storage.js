@@ -25,13 +25,13 @@ export default class Storage {
     return null
   }
 
-  save (gameState) {
+  saveGameState (gameState) {
     sessionStorage.setItem(this.storageKey, JSON.stringify(gameState))
   }
 
   transformRows (rows) {
     if (!rows) {
-      return []
+      return null
     }
     rows.forEach((row, rowIndex) => {
       row.forEach((cell, cellIndex) => {
