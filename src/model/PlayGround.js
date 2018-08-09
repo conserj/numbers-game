@@ -1,5 +1,6 @@
 import PlaygroundCell from './PlaygroundCell'
 import PlaygroundCellIndex from './PlaygroundCellIndex'
+import _ from 'lodash'
 
 export default class PlayGround {
   rows = [];
@@ -171,5 +172,24 @@ export default class PlayGround {
   makeZeroCell (cell) {
     cell = this.getCell(this.indexOfCell(cell))
     cell.setValue(0)
+  }
+
+  getDepthClone () {
+    let depthClone = []
+    this.rows.forEach((row, rowIndex) => {
+      row.forEach((cell, cellIndex) => {
+        if (!depthClone[rowIndex]) {
+          depthClone[rowIndex] = []
+        }
+        depthClone[rowIndex][cellIndex] = new PlaygroundCell(
+          new PlaygroundCellIndex(
+            cell.getRowIdx(),
+            cell.getCellIdx()
+          ),
+          cell.getValue()
+        )
+      })
+    })
+    return depthClone
   }
 }

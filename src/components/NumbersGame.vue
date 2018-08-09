@@ -85,7 +85,6 @@ export default {
     Game.onModelUpdate((model) => {
       this.field = []
       this.field = model
-      Game.save()
       this.statistic = []
       this.statistic = Game.getStatistics()
     })

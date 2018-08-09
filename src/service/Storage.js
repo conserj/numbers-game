@@ -1,3 +1,4 @@
+import GameState from '../model/GameState'
 import PlaygroundCell from '../model/PlaygroundCell'
 import PlaygroundCellIndex from '../model/PlaygroundCellIndex'
 
@@ -6,76 +7,32 @@ export default class Storage {
     this.storageKey = storageKey
   }
 
-  save (rows) {
-    sessionStorage.setItem(this.storageKey, JSON.stringify({
-      current: rows,
-      previous: this.readCurrent(),
-      moveCount: this.getMoveCount()
-    }))
-  }
-
-  getMoveCount () {
-    let storedRows = this.getStoredRows()
-    if (!storedRows || (storedRows && !storedRows.hasOwnProperty('moveCount'))) {
-      return 0
-    }
-
-    return storedRows.moveCount
-  }
-
-  incrementMoveCount () {
+  getGameState () {
     let json = sessionStorage.getItem(this.storageKey)
     if (json) {
       let obj = JSON.parse(json)
-      obj.moveCount = obj.moveCount ? (parseInt(obj.moveCount) + 1) : 1
-      sessionStorage.setItem(this.storageKey, JSON.stringify(obj))
+      if (!obj.hasOwnProperty('currState')) {
+        throw new Error('GameState is invalid')
+      }
+      let gameState = new GameState()
+      gameState.setPrevState(obj.hasOwnProperty('prevState') ? this.transformRows(obj.prevState) : null)
+      gameState.setComboCount(obj.hasOwnProperty('comboCount') ? parseInt(obj.comboCount) : 0)
+      gameState.setCurrState(this.transformRows(obj.currState))
+
+      return gameState
     }
+
     return null
   }
 
-  readCurrent () {
-    let result = null
-    let storedRows = this.getStoredRows()
-    if (!storedRows || (storedRows && !storedRows.hasOwnProperty('current'))) {
-      return result
-    }
-
-    if (storedRows.current) {
-      result = this.transformRows(storedRows.current)
-    }
-    return result
-  }
-
-  readPrevious () {
-    let result = null
-    let storedRows = this.getStoredRows()
-    if (!storedRows || (storedRows && !storedRows.hasOwnProperty('previous'))) {
-      return result
-    }
-    if (storedRows.previous) {
-      result = this.transformRows(storedRows.previous)
-      sessionStorage.setItem(
-        this.storageKey,
-        JSON.stringify({
-          current: result,
-          previous: null,
-          moveCount: this.getMoveCount()
-        })
-      )
-    }
-
-    return result
-  }
-
-  getStoredRows () {
-    let json = sessionStorage.getItem(this.storageKey)
-    if (json) {
-      return JSON.parse(json)
-    }
-    return null
+  save (gameState) {
+    sessionStorage.setItem(this.storageKey, JSON.stringify(gameState))
   }
 
   transformRows (rows) {
+    if (!rows) {
+      return []
+    }
     rows.forEach((row, rowIndex) => {
       row.forEach((cell, cellIndex) => {
         rows[rowIndex][cellIndex] = new PlaygroundCell(

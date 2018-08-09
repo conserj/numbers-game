@@ -2,17 +2,21 @@
 import _ from 'lodash'
 import PlayGround from './PlayGround'
 import ComboHandler from '../service/ComboHandler'
+import GameState from './GameState'
+import PlaygroundCell from "./PlaygroundCell"
+import PlaygroundCellIndex from "./PlaygroundCellIndex";
 
 export default class NumbersGame {
   constructor (storage) {
-    this.storage = storage
-    this.model = new PlayGround()
+    this.playground = new PlayGround()
     this.comboHandler = new ComboHandler()
+    this.gameState = new GameState()
+    this.gameStorage = storage
     this._onModelUpdate = []
   }
 
   getModel () {
-    return this.model
+    return this.playground
   }
 
   onModelUpdate (callback = (model) => {}) {
@@ -22,74 +26,95 @@ export default class NumbersGame {
   comboSelected (combo) {
     let min = combo.getMin()
     let max = combo.getMax()
-    let canNullifyPair = this.comboHandler.canNullifyCombo(combo, this.model)
+    let canNullifyPair = this.comboHandler.canNullifyCombo(combo, this.playground)
 
     if (!canNullifyPair) {
-      this.model.getCell(min.getIndex()).setState(-1)
-      this.model.getCell(max.getIndex()).setState(-1)
+      this.playground.getCell(min.getIndex()).setState(-1)
+      this.playground.getCell(max.getIndex()).setState(-1)
     } else {
-      this.model.makeZeroCell(min)
-      this.model.makeZeroCell(max)
-      this.storage.incrementMoveCount()
+      let prevState = this.playground.getDepthClone()
+      this.playground.makeZeroCell(min)
+      this.playground.makeZeroCell(max)
+      this.gameState.setPrevState(prevState)
+      this.gameState.setCurrState(this.playground.getRows())
+      this.gameState.setComboCount(this.gameState.getComboCount() + 1)
+      this.gameStorage.save(this.gameState)
     }
 
-    this.fire(this._onModelUpdate, this.model)
+    this.fire(this._onModelUpdate, this.playground)
   }
 
   clear () {
-    this.getModel().clear()
-    this.fire(this._onModelUpdate, this.model)
+    let prevState = this.playground.getDepthClone()
+    this.playground.clear()
+    this.gameState.setCurrState(this.playground.getRows())
+    this.gameState.setPrevState(prevState)
+    this.gameStorage.save(this.gameState)
+    this.fire(this._onModelUpdate, this.playground)
   }
 
   hasCombinations () {
-    return !!this.comboHandler.searchOptimalCombo(this.getModel())
+    return !!this.comboHandler.searchOptimalCombo(this.playground)
   }
 
   generatePlayground () {
-    this.getModel().generate()
-    this.fire(this._onModelUpdate, this.model)
+    let prevState = this.playground.getDepthClone()
+    this.playground.generate()
+    this.gameState.setPrevState(prevState)
+    this.gameState.setCurrState(this.playground.getRows())
+    this.gameStorage.save(this.gameState)
+
+    this.fire(this._onModelUpdate, this.playground)
   }
 
   help () {
     let combo = this.comboHandler.searchOptimalCombo(this.getModel())
-    if (combo !== null) {
-      this.model.getCell(combo.getMin().getIndex()).setState(1)
-      this.model.getCell(combo.getMax().getIndex()).setState(1)
-      return true
+    if (combo === null) {
+      return false
     }
-    return false
+
+    this.playground.getCell(combo.getMin().getIndex()).setState(1)
+    this.playground.getCell(combo.getMax().getIndex()).setState(1)
+
+    return true
   }
 
   run () {
-    let storedRows = this.storage.readCurrent()
-    if (storedRows) {
-      this.getModel().setRows(storedRows)
+    let gameState = this.gameStorage.getGameState()
+
+    if (gameState) {
+      this.gameState = gameState
+      this.playground.setRows(this.gameState.getCurrState())
     } else {
-      this.getModel().generate()
-      this.save()
+      this.playground.generate()
+      this.gameState.setCurrState(this.playground.getRows())
+      this.gameState.setPrevState(null)
+      this.gameStorage.save(this.gameState)
     }
-    this.fire(this._onModelUpdate, this.model)
+
+    this.fire(this._onModelUpdate, this.playground)
   }
 
   undo () {
-    let storedRows = this.storage.readPrevious()
-    if (storedRows) {
-      this.getModel().setRows(storedRows)
+    let prevState = this.gameState.getPrevState()
+    if (prevState) {
+      this.gameState.setCurrState(prevState)
+      this.gameState.setPrevState(null)
+      this.gameState.setComboCount(this.gameState.getComboCount() - 1)
+      this.gameStorage.save(this.gameState)
+      this.playground.setRows(prevState)
     }
-    this.fire(this._onModelUpdate, this.model)
-  }
 
-  save () {
-    this.storage.save(this.getModel().getRows())
+    this.fire(this._onModelUpdate, this.playground)
   }
 
   getStatistics () {
     let statistics = []
-    statistics.push({'title': 'Processed combinations', 'value': this.storage.getMoveCount()})
-    statistics.push({'title': 'Rows count', 'value': this.getModel().getRowCount()})
+    statistics.push({'title': 'Processed combinations', 'value': this.gameState.getComboCount()})
+    statistics.push({'title': 'Rows count', 'value': this.playground.getRowCount()})
 
     let counts = {}
-    this.model.getRows().forEach((row) => {
+    this.playground.getRows().forEach((row) => {
       row.forEach((cell) => {
         counts.all = counts.all ? (counts.all + 1) : 1
         if (!counts.hasOwnProperty(cell.getValue())) {
@@ -114,10 +139,16 @@ export default class NumbersGame {
   }
 
   restart () {
-    this.model = new PlayGround()
-    this.getModel().generate()
-    this.save()
-    this.fire(this._onModelUpdate, this.model)
+    this.playground = new PlayGround()
+    this.playground.generate()
+
+    this.gameState.setComboCount(0)
+    this.gameState.setCurrState(this.playground.getRows())
+    this.gameState.setPrevState(null)
+
+    this.gameStorage.save(this.gameState)
+
+    this.fire(this._onModelUpdate, this.playground)
   }
 
   fire (callbacks, args) {
