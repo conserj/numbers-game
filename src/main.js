@@ -56,7 +56,8 @@ const messages = {
     },
     messages: {
       generatePlaygroundWarning: 'You have unprocessed combinations. Continue?',
-      restartMessage: 'Are you sure you want to start a new game? All progress will be lost. Continue?'
+      restartMessage: 'Are you sure you want to start a new game? All progress will be lost. Continue?',
+      noMoreComboMessage: 'No more combinations left. Press `Generate`'
     }
   },
   ua: {
@@ -101,7 +102,8 @@ const messages = {
     },
     messages: {
       generatePlaygroundWarning: 'Не всі можливі комбінації зібрані. Продовжити?',
-      restartMessage: 'Ви впевнені, що хочете почати нову гру? Весь прогрес буде втрачено. Продовжити?'
+      restartMessage: 'Ви впевнені, що хочете почати нову гру? Весь прогрес буде втрачено. Продовжити?',
+      noMoreComboMessage: 'Немає доступних комбінацій, натисніть `Згенерувати`'
     }
   },
   ru: {
@@ -146,7 +148,8 @@ const messages = {
     },
     messages: {
       generatePlaygroundWarning: 'Не все возможные комбинации собраны. Продолжить?',
-      restartMessage: 'Вы уверены что хотите начать новую игру? Весь прогресс будет утерян. Продолжить?'
+      restartMessage: 'Вы уверены что хотите начать новую игру? Весь прогресс будет утерян. Продолжить?',
+      noMoreComboMessage: 'Нету доступных комбинаций, нажмите `Сгенерировать`'
     }
   }
 }
