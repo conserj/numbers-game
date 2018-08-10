@@ -4,8 +4,8 @@ import StatisticRecord from '../model/StatisticRecord'
 export default class StatisticBuilder {
   buildStatistic (playground, gameState) {
     let collection = new StatisticCollection()
-    collection.addItem(new StatisticRecord('Processed combinations', gameState.getComboCount()))
-    collection.addItem(new StatisticRecord('Rows count', playground.getRowCount()))
+    collection.addItem(new StatisticRecord('processedCombinations', gameState.getComboCount()))
+    collection.addItem(new StatisticRecord('rowCount', playground.getRowCount()))
 
     let numberCounts = {}
     playground.getRows().forEach((row) => {
@@ -18,16 +18,16 @@ export default class StatisticBuilder {
       })
     })
 
-    collection.addItem(new StatisticRecord('Numbers total', numberCounts.all))
-    collection.addItem(new StatisticRecord('Ones', numberCounts[1]))
-    collection.addItem(new StatisticRecord('Twos', numberCounts[2]))
-    collection.addItem(new StatisticRecord('Threes', numberCounts[3]))
-    collection.addItem(new StatisticRecord('Fours', numberCounts[4]))
-    collection.addItem(new StatisticRecord('Fives', numberCounts[5]))
-    collection.addItem(new StatisticRecord('Sixes', numberCounts[6]))
-    collection.addItem(new StatisticRecord('Sevens', numberCounts[7]))
-    collection.addItem(new StatisticRecord('Eights', numberCounts[8]))
-    collection.addItem(new StatisticRecord('Nines', numberCounts[9]))
+    collection.addItem(new StatisticRecord('numbersTotal', numberCounts.all))
+    collection.addItem(new StatisticRecord('ones', numberCounts[1]))
+    collection.addItem(new StatisticRecord('twos', numberCounts[2]))
+    collection.addItem(new StatisticRecord('threes', numberCounts[3]))
+    collection.addItem(new StatisticRecord('fours', numberCounts[4]))
+    collection.addItem(new StatisticRecord('fives', numberCounts[5]))
+    collection.addItem(new StatisticRecord('sixes', numberCounts[6]))
+    collection.addItem(new StatisticRecord('sevens', numberCounts[7]))
+    collection.addItem(new StatisticRecord('eights', numberCounts[8]))
+    collection.addItem(new StatisticRecord('nines', numberCounts[9]))
 
     return collection
   }

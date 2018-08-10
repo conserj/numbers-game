@@ -1,11 +1,11 @@
 export default class StatisticRecord {
-  constructor (title, value) {
-    this.title = title
+  constructor (statName, value) {
+    this.statName = statName
     this.value = value
   }
 
-  getTitle () {
-    return this.title
+  getStatName () {
+    return this.statName
   }
 
   getValue () {

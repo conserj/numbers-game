@@ -11,13 +11,15 @@ export default class NumbersGame {
    * @param {GameState} gameState
    * @param {StatisticBuilder} statisticBuilder
    * @param {Storage} storage
+   * @param {Object} config
    */
-  constructor (playground, comboHandler, gameState, statisticBuilder, storage) {
+  constructor (playground, comboHandler, gameState, statisticBuilder, storage, config) {
     this.playground = playground
     this.comboHandler = comboHandler
     this.gameState = gameState
     this.statisticBuilder = statisticBuilder
     this.gameStorage = storage
+    this.config = config
     this._onModelUpdate = []
   }
 
@@ -152,7 +154,7 @@ export default class NumbersGame {
    * @returns {void}
    */
   restart () {
-    this.playground = new Playground()
+    this.playground = new Playground(parseInt(this.config.mode))
     this.playground.generate()
     this.gameState.setComboCount(0)
     this.gameState.setCurrState(this.playground.getRows())

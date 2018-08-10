@@ -2,19 +2,19 @@
     <el-card class="box-card">
         <div class="buttons">
             <el-button-group>
-                <el-tooltip class="item" effect="dark" content="Generate" placement="top-start">
+                <el-tooltip class="item" effect="dark" :content="$t('buttons.generate')" placement="top-start">
                     <el-button @click="generatePlayground" icon="el-icon-circle-plus"></el-button>
                 </el-tooltip>
-                <el-tooltip class="item" effect="dark" content="Undo" placement="top-start">
+                <el-tooltip class="item" effect="dark" :content="$t('buttons.undo')" placement="top-start">
                     <el-button @click="undo" icon="el-icon-back"></el-button>
                 </el-tooltip>
-                <el-tooltip class="item" effect="dark" content="Help" placement="top-start">
+                <el-tooltip class="item" effect="dark" :content="$t('buttons.help')" placement="top-start">
                     <el-button @click="help" icon="el-icon-question"></el-button>
                 </el-tooltip>
-                <el-tooltip class="item" effect="dark" content="Clear" placement="top-start">
+                <el-tooltip class="item" effect="dark" :content="$t('buttons.clear')" placement="top-start">
                     <el-button @click="clear" icon="el-icon-delete"></el-button>
                 </el-tooltip>
-                <el-tooltip class="item" effect="dark" content="Restart" placement="top-start">
+                <el-tooltip class="item" effect="dark" :content="$t('buttons.restart')" placement="top-start">
                     <el-button @click="restart" icon="el-icon-refresh"></el-button>
                 </el-tooltip>
             </el-button-group>
@@ -22,12 +22,16 @@
         <el-collapse accordion>
             <el-collapse-item>
                 <template slot="title">
-                    Game Statistic <i class="header-icon el-icon-info"></i>
+                    {{ $t('statistic.label') }} <i class="header-icon el-icon-info"></i>
                 </template>
-                <el-table :data="statistics" style="width: 100%" :show-header=false stripe>
-                    <el-table-column prop="title"></el-table-column>
-                    <el-table-column prop="value"></el-table-column>
-                </el-table>
+                <el-row v-for="(stat, statIdx) in statistics" :key="'stat_' + statIdx">
+                    <el-col :span="6">
+                        {{ $t('statistic.titles.' + stat.getStatName()) }}
+                    </el-col>
+                    <el-col :span="6">
+                        {{ stat.getValue() }}
+                    </el-col>
+                </el-row>
             </el-collapse-item>
         </el-collapse>
         <div class="playground">
@@ -127,6 +131,10 @@ export default {
 
       return result
     },
+      getStatisticTitle (title) {
+        console.log(title)
+        return title
+      },
     setChecked (cell) {
       if (cell.getValue() === 0) {
         return
