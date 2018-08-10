@@ -11,15 +11,13 @@ export default class NumbersGame {
    * @param {GameState} gameState
    * @param {StatisticBuilder} statisticBuilder
    * @param {Storage} storage
-   * @param {Object} config
    */
-  constructor (playground, comboHandler, gameState, statisticBuilder, storage, config) {
+  constructor (playground, comboHandler, gameState, statisticBuilder, storage) {
     this.playground = playground
     this.comboHandler = comboHandler
     this.gameState = gameState
     this.statisticBuilder = statisticBuilder
     this.gameStorage = storage
-    this.config = config
     this._onModelUpdate = []
   }
 
@@ -28,6 +26,26 @@ export default class NumbersGame {
    */
   getPlayground () {
     return this.playground
+  }
+
+  /**
+   * @return {String}
+   */
+  getLocale () {
+    let locale = this.gameState.getLocale()
+    if (!locale) {
+      return 'gb'
+    }
+
+    return locale
+  }
+
+  /**
+   * @param {String} locale
+   */
+  setLocale (locale) {
+    this.gameState.setLocale(locale)
+    this.gameStorage.saveGameState(this.gameState)
   }
 
   /**
@@ -113,7 +131,6 @@ export default class NumbersGame {
    */
   run () {
     let gameState = this.gameStorage.getGameState()
-
     if (gameState) {
       this.gameState = gameState
       this.playground.setRows(this.gameState.getCurrState())
@@ -154,7 +171,7 @@ export default class NumbersGame {
    * @returns {void}
    */
   restart () {
-    this.playground = new Playground(parseInt(this.config.mode))
+    this.playground = new Playground(0)
     this.playground.generate()
     this.gameState.setComboCount(0)
     this.gameState.setCurrState(this.playground.getRows())

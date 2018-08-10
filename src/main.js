@@ -8,20 +8,22 @@ import elements from './elements'
 import VueI18n from 'vue-i18n'
 import VueResource from 'vue-resource'
 import FlagIcon from 'vue-flag-icon'
-import ConfigStorage from './service/ConfigStorage'
 
 Vue.use(FlagIcon)
 Vue.use(VueResource)
 Vue.use(VueI18n)
 Vue.config.productionTip = true
 const messages = {
-  en: {
+  gb: {
     buttons: {
       generate: 'Generate',
       undo: 'Undo',
       help: 'Help',
       clear: 'Clear',
-      restart: 'Restart'
+      restart: 'Restart',
+      language: 'Language',
+      OK: 'Yes',
+      cancel: 'No'
     },
     statistic: {
       label: 'Game statistic',
@@ -43,7 +45,18 @@ const messages = {
     menu: {
       languageLabel: 'Choose language',
       modeLabel: 'Choose mode',
-      saveAndPlayText: 'Save and play'
+      saveAndPlayText: 'Save and play',
+      startNewGameText: 'Start new game',
+      continueGameText: 'Continue game'
+    },
+    endGame: {
+      title: 'Congratulations',
+      message: '<p>You have finished all the combinations. This time you needed {count} combinations. Press `Start new game` and try to make your result better!</p>',
+      button: 'Start new game'
+    },
+    messages: {
+      generatePlaygroundWarning: 'You have unprocessed combinations. Continue?',
+      restartMessage: 'Are you sure you want to start a new game? All progress will be lost. Continue?'
     }
   },
   ua: {
@@ -52,7 +65,10 @@ const messages = {
       undo: 'Відмінити',
       help: 'Підказка',
       clear: 'Очистити',
-      restart: 'Почати заново'
+      restart: 'Почати заново',
+      language: 'Мова',
+      OK: 'Так',
+      cancel: 'Ні'
     },
     statistic: {
       label: 'Ігрова статистика',
@@ -74,7 +90,18 @@ const messages = {
     menu: {
       languageLabel: 'Виберіть мову',
       modeLabel: 'Виберіть режим',
-      saveAndPlayText: 'Зберегти і грати'
+      saveAndPlayText: 'Зберегти і грати',
+      startNewGameText: 'Почати нову гру',
+      continueGameText: 'Продовжити гру'
+    },
+    endGame: {
+      title: 'Ура!',
+      message: '<p>Ви склали усі комбінації. Цього разу Ви впорались за {count} комбінацій. Натисніть `Почати нову гру` і спробуйте зробити Ваш результат кращим!</p>',
+      button: 'Почати нову гру'
+    },
+    messages: {
+      generatePlaygroundWarning: 'Не всі можливі комбінації зібрані. Продовжити?',
+      restartMessage: 'Ви впевнені, що хочете почати нову гру? Весь прогрес буде втрачено. Продовжити?'
     }
   },
   ru: {
@@ -83,7 +110,10 @@ const messages = {
       undo: 'Отменить',
       help: 'Подсказка',
       clear: 'Очистить',
-      restart: 'Начать сначала'
+      restart: 'Начать сначала',
+      language: 'Язык',
+      OK: 'Да',
+      cancel: 'Нет'
     },
     statistic: {
       label: 'Игровая статистика',
@@ -105,17 +135,25 @@ const messages = {
     menu: {
       languageLabel: 'Выберите язык',
       modeLabel: 'Выберите режим',
-      saveAndPlayText: 'Сохранить и играть'
+      saveAndPlayText: 'Сохранить и играть',
+      startNewGameText: 'Начать новую игру',
+      continueGameText: 'Продолжить игру'
+    },
+    endGame: {
+      title: 'Ура!',
+      message: '<p>Вы собрали все комбинации. На этот раз Вам понадобилось {count} комбинаций. Нажмите `Начать новую игру` и попытайтесь сделать Ваш результат лучше!</p>',
+      button: 'Начать новую игру'
+    },
+    messages: {
+      generatePlaygroundWarning: 'Не все возможные комбинации собраны. Продолжить?',
+      restartMessage: 'Вы уверены что хотите начать новую игру? Весь прогресс будет утерян. Продолжить?'
     }
   }
 }
 
-let configStorage = new ConfigStorage('GAME_CFG')
-let config = configStorage.get()
-
 // Create VueI18n instance with options
 const i18n = new VueI18n({
-  locale: config.lang, // set locale
+  locale: 'gb', // set locale
   messages // set locale messages
 })
 

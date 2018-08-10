@@ -18,6 +18,7 @@ export default class Storage {
       gameState.setPrevState(obj.hasOwnProperty('prevState') ? this.transformRows(obj.prevState) : null)
       gameState.setComboCount(obj.hasOwnProperty('comboCount') ? parseInt(obj.comboCount) : 0)
       gameState.setCurrState(this.transformRows(obj.currState))
+      gameState.setLocale(obj.hasOwnProperty('locale') ? obj.locale : 'gb')
 
       return gameState
     }

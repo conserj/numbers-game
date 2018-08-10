@@ -1,17 +1,17 @@
 <template>
     <el-row>
-        <main-menu></main-menu>
+        <numbers-game></numbers-game>
     </el-row>
 </template>
 
 <script>
 
-import MainMenu from './MainMenu'
+import NumbersGame from './NumbersGame'
 
 export default {
   name: 'IndexPage',
   components: {
-    MainMenu
+    NumbersGame
   },
   data () {
     return {

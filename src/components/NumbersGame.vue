@@ -17,6 +17,26 @@
                 <el-tooltip class="item" effect="dark" :content="$t('buttons.restart')" placement="top-start">
                     <el-button @click="restart" icon="el-icon-refresh"></el-button>
                 </el-tooltip>
+                <el-tooltip class="item" effect="dark" :content="$t('buttons.language')" placement="top-start">
+                    <el-button>
+                        <el-dropdown @command="setLocale" trigger="click">
+                            <span class="el-dropdown-link">
+                                <flag :iso="getFlagIso()"/>&nbsp;<i class="el-icon-arrow-down el-icon--right"></i>
+                            </span>
+                            <el-dropdown-menu slot="dropdown">
+                                <el-dropdown-item command="ua">
+                                    <flag iso="ua"/>&nbsp;Українська
+                                </el-dropdown-item>
+                                <el-dropdown-item command="gb">
+                                    <flag iso="gb"/>&nbsp;English
+                                </el-dropdown-item>
+                                <el-dropdown-item command="ru">
+                                    <flag iso="ru"/>&nbsp;Русский
+                                </el-dropdown-item>
+                            </el-dropdown-menu>
+                        </el-dropdown>
+                    </el-button>
+                </el-tooltip>
             </el-button-group>
         </div>
         <el-collapse accordion>
@@ -29,7 +49,7 @@
                         {{ $t('statistic.titles.' + stat.getStatName()) }}
                     </el-col>
                     <el-col :span="6">
-                        {{ stat.getValue() }}
+                        {{ stat.getValue() || 0 }}
                     </el-col>
                 </el-row>
             </el-collapse-item>
@@ -91,17 +111,24 @@ export default {
       this.playground = model
       this.statistics = []
       this.statistics = Game.getStatistics().getAll()
+
       if (this.playground.isCompleted()) {
-        this.$alert('<p>You have finished all the combinations. This time you needed ' + Game.gameState.getComboCount() + ' combinations. Press `Start New Game` and try to make your result better!</p>', 'Congratulations', {
-          confirmButtonText: 'Start New Game',
-          type: 'success',
-          dangerouslyUseHTMLString: true,
-          callback: action => {
-            Game.restart()
+        this.$alert(
+          this._i18n.t('endGame.message', {count: Game.gameState.getComboCount()}),
+          this._i18n.t('endGame.title'),
+          {
+            confirmButtonText: this._i18n.t('endGame.button'),
+            type: 'success',
+            dangerouslyUseHTMLString: true,
+            callback: action => {
+              Game.restart()
+            }
           }
-        })
+        )
       }
     })
+
+    this._i18n.locale = Game.getLocale()
     this.statistics = Game.getStatistics().getAll()
   },
   methods: {
@@ -131,10 +158,13 @@ export default {
 
       return result
     },
-      getStatisticTitle (title) {
-        console.log(title)
-        return title
-      },
+    setLocale (locale) {
+      this._i18n.locale = locale
+      Game.setLocale(locale)
+    },
+    getFlagIso () {
+      return Game.getLocale()
+    },
     setChecked (cell) {
       if (cell.getValue() === 0) {
         return
@@ -151,15 +181,14 @@ export default {
     },
     addSelectedPoint (cell) {
       let result = _.clone(this.selectedCells)
-
       result.push(cell)
       this.selectedCells = result
     },
     generatePlayground () {
       if (Game.hasCombinations()) {
-        this.$confirm('You have unprocessed combinations. Continue?', 'Warning', {
-          confirmButtonText: 'OK',
-          cancelButtonText: 'Cancel',
+        this.$confirm(this._i18n.t('messages.generatePlaygroundWarning'), '', {
+          confirmButtonText: this._i18n.t('buttons.OK'),
+          cancelButtonText: this._i18n.t('buttons.cancel'),
           type: 'warning'
         }).then(() => {
           Game.generatePlayground()
@@ -171,16 +200,16 @@ export default {
     help () {
       if (!Game.highlightAvailableCombo()) {
         this.$message({
-          title: 'Halt!',
-          message: 'No more combinations left. Press "Generate"',
+          title: this._i18n.t('messages.noMoreComboTitle'),
+          message: this._i18n.t('messages.noMoreComboMessage'),
           type: 'warning'
         })
       }
     },
     restart () {
-      this.$confirm('Are you sure you want to start a new game? All progress will be lost. Continue?', 'Warning', {
-        confirmButtonText: 'OK',
-        cancelButtonText: 'Cancel',
+      this.$confirm(this._i18n.t('messages.restartMessage'), '', {
+        confirmButtonText: this._i18n.t('buttons.OK'),
+        cancelButtonText: this._i18n.t('buttons.cancel'),
         type: 'warning'
       }).then(() => {
         Game.restart()
@@ -191,12 +220,6 @@ export default {
     },
     undo () {
       Game.undo()
-    },
-    info () {
-      this.$alert('Game Statistics', 'Game Statistics', {
-        confirmButtonText: 'Close',
-        callback: action => { }
-      })
     }
   }
 }
@@ -259,11 +282,11 @@ export default {
         &.bg_black {
             cursor: default;
             background: repeating-linear-gradient(
-                45deg,
-                rgba(255, 255, 255, 0.6),
-                rgba(255, 255, 255, 0.6),
-                rgba(255, 255, 255, 0.6),
-                rgba(0, 0, 0, 1) 7px
+                    45deg,
+                    rgba(255, 255, 255, 0.6),
+                    rgba(255, 255, 255, 0.6),
+                    rgba(255, 255, 255, 0.6),
+                    rgba(0, 0, 0, 1) 7px
             )
         }
 

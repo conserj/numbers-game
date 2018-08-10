@@ -5,6 +5,7 @@ export default class GameState {
   comboCount = 0
   currState = null
   prevState = null
+  locale = 'gb'
 
   /**
    * @return {number}
@@ -46,5 +47,19 @@ export default class GameState {
    */
   setPrevState (state) {
     this.prevState = state
+  }
+
+  /**
+   * @return {String}
+   */
+  getLocale () {
+    return this.locale
+  }
+
+  /**
+   * @param {String} locale
+   */
+  setLocale (locale) {
+    this.locale = locale
   }
 }
