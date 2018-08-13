@@ -1,79 +1,85 @@
 <template>
-    <el-card class="box-card">
-        <div class="buttons">
-            <el-button-group>
-                <el-tooltip class="item" effect="dark" :content="$t('buttons.generate')" placement="top-start">
-                    <el-button @click="generatePlayground" icon="el-icon-circle-plus"></el-button>
-                </el-tooltip>
-                <el-tooltip class="item" effect="dark" :content="$t('buttons.undo')" placement="top-start">
-                    <el-button @click="undo" icon="el-icon-back"></el-button>
-                </el-tooltip>
-                <el-tooltip class="item" effect="dark" :content="$t('buttons.help')" placement="top-start">
-                    <el-button @click="help" icon="el-icon-question"></el-button>
-                </el-tooltip>
-                <el-tooltip class="item" effect="dark" :content="$t('buttons.clear')" placement="top-start">
-                    <el-button @click="clear" icon="el-icon-delete"></el-button>
-                </el-tooltip>
-                <el-tooltip class="item" effect="dark" :content="$t('buttons.restart')" placement="top-start">
-                    <el-button @click="restart" icon="el-icon-refresh"></el-button>
-                </el-tooltip>
-                <el-tooltip class="item" effect="dark" :content="$t('buttons.language')" placement="top-start">
-                    <el-button>
-                        <el-dropdown @command="setLocale" trigger="click">
+    <el-container>
+        <el-header>
+            <div class="buttons">
+                <el-button-group>
+                    <el-tooltip class="item" effect="dark" :content="$t('buttons.generate')" placement="top-start">
+                        <el-button @click="generatePlayground" icon="el-icon-circle-plus"></el-button>
+                    </el-tooltip>
+                    <el-tooltip class="item" effect="dark" :content="$t('buttons.undo')" placement="top-start">
+                        <el-button @click="undo" icon="el-icon-back"></el-button>
+                    </el-tooltip>
+                    <el-tooltip class="item" effect="dark" :content="$t('buttons.help')" placement="top-start">
+                        <el-button @click="help" icon="el-icon-question"></el-button>
+                    </el-tooltip>
+                    <el-tooltip class="item" effect="dark" :content="$t('buttons.clear')" placement="top-start">
+                        <el-button @click="clear" icon="el-icon-delete"></el-button>
+                    </el-tooltip>
+                    <el-tooltip class="item" effect="dark" :content="$t('buttons.restart')" placement="top-start">
+                        <el-button @click="restart" icon="el-icon-refresh"></el-button>
+                    </el-tooltip>
+                    <el-tooltip class="item" effect="dark" :content="$t('buttons.language')" placement="top-start">
+                        <el-button>
+                            <el-dropdown @command="setLocale" trigger="click">
                             <span class="el-dropdown-link">
                                 <flag :iso="getFlagIso()"/>&nbsp;<i class="el-icon-arrow-down el-icon--right"></i>
                             </span>
-                            <el-dropdown-menu slot="dropdown">
-                                <el-dropdown-item command="ua">
-                                    <flag iso="ua"/>&nbsp;Українська
-                                </el-dropdown-item>
-                                <el-dropdown-item command="gb">
-                                    <flag iso="gb"/>&nbsp;English
-                                </el-dropdown-item>
-                                <el-dropdown-item command="ru">
-                                    <flag iso="ru"/>&nbsp;Русский
-                                </el-dropdown-item>
-                            </el-dropdown-menu>
-                        </el-dropdown>
-                    </el-button>
-                </el-tooltip>
-            </el-button-group>
-        </div>
-        <el-collapse accordion>
-            <el-collapse-item>
-                <template slot="title">
-                    {{ $t('statistic.label') }} <i class="header-icon el-icon-info"></i>
-                </template>
-                <el-row v-for="(stat, statIdx) in statistics" :key="'stat_' + statIdx">
-                    <el-col :span="6">
-                        {{ $t('statistic.titles.' + stat.getStatName()) }}
-                    </el-col>
-                    <el-col :span="6">
-                        {{ stat.getValue() || 0 }}
-                    </el-col>
-                </el-row>
-            </el-collapse-item>
-        </el-collapse>
-        <div class="playground">
-            <el-row v-for="(row, rowIndex) in playground.rows" :key="'row_' + rowIndex">
-                <el-col
-                    :span="1"
-                    v-for="(cell, cellIndex) in row"
-                    :key="'cell_' + cellIndex + '_' + rowIndex"
-                    class="cell"
-                >
-                    <div
-                        @click="setChecked(cell)"
-                        :class="cellClass(cell)"
-                        class="center"
-                    >
-                        <span v-if="cell.getValue() === 0"></span>
-                        <span v-else>{{ cell.getValue() }}</span>
-                    </div>
-                </el-col>
-            </el-row>
-        </div>
-    </el-card>
+                                <el-dropdown-menu slot="dropdown">
+                                    <el-dropdown-item command="ua">
+                                        <flag iso="ua"/>&nbsp;Українська
+                                    </el-dropdown-item>
+                                    <el-dropdown-item command="gb">
+                                        <flag iso="gb"/>&nbsp;English
+                                    </el-dropdown-item>
+                                    <el-dropdown-item command="ru">
+                                        <flag iso="ru"/>&nbsp;Русский
+                                    </el-dropdown-item>
+                                </el-dropdown-menu>
+                            </el-dropdown>
+                        </el-button>
+                    </el-tooltip>
+                </el-button-group>
+            </div>
+        </el-header>
+        <el-main>
+            <el-card class="box-card">
+                <el-collapse accordion class="statistic">
+                    <el-collapse-item>
+                        <template slot="title" class="header">
+                            {{ $t('statistic.label') }} <i class="header-icon el-icon-info"></i>
+                        </template>
+                        <el-row v-for="(stat, statIdx) in statistics" :key="'stat_' + statIdx">
+                            <el-col :span="6">
+                                {{ $t('statistic.titles.' + stat.getStatName()) }}
+                            </el-col>
+                            <el-col :span="6">
+                                {{ stat.getValue() || 0 }}
+                            </el-col>
+                        </el-row>
+                    </el-collapse-item>
+                </el-collapse>
+                <div class="playground">
+                    <el-row v-for="(row, rowIndex) in playground.rows" :key="'row_' + rowIndex">
+                        <el-col
+                            :span="1"
+                            v-for="(cell, cellIndex) in row"
+                            :key="'cell_' + cellIndex + '_' + rowIndex"
+                            class="cell"
+                        >
+                            <div
+                                @click="setChecked(cell)"
+                                :class="cellClass(cell)"
+                                class="center"
+                            >
+                                <span v-if="cell.getValue() === 0"></span>
+                                <span v-else>{{ cell.getValue() }}</span>
+                            </div>
+                        </el-col>
+                    </el-row>
+                </div>
+            </el-card>
+        </el-main>
+    </el-container>
 </template>
 
 <script>
@@ -226,8 +232,30 @@ export default {
 </script>
 
 <style scoped lang="scss">
+    .el-header, .el-footer {
+        background-color: #B3C0D1;
+        color: #333;
+        text-align: center;
+        line-height: 60px;
+    }
+
+    .el-main {
+        background-color: #E9EEF3;
+        color: #333;
+        text-align: center;
+        line-height: 160px;
+    }
+
+    body > .el-container {
+        margin-bottom: 40px;
+    }
+
     .buttons {
         margin-bottom: 20px;
+    }
+
+    .statistic {
+        text-align: left;
     }
 
     .playground {
