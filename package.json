@@ -15,7 +15,7 @@
   },
   "dependencies": {
     "jquery": "3.3.1",
-    "lodash": "4.17.10",
+    "lodash": "4.17.19",
     "vue": "^2.5.2",
     "vue-flag-icon": "^1.0.6",
     "vue-i18n": "^8.0.0",
